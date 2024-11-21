@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+
     namespace = "com.example.tourscan"
     compileSdk = 34
 
@@ -41,8 +42,7 @@ android {
 
 dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.activity:activity-ktx:1.9.3")
-    implementation("androidx.fragment:fragment-compose:1.8.5")
+    implementation(libs.coil)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
