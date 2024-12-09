@@ -29,34 +29,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.FileProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.tourscan.ui.theme.TourScanTheme
+import java.io.File
 
 class MainActivity : ComponentActivity() {
 
@@ -66,47 +58,54 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         enableEdgeToEdge()
         setContent {
-
             val context = LocalContext.current
-            var imageUri by remember { mutableStateOf<Uri?>(null) }
-            val bitmapImage = remember { mutableStateOf<Bitmap?>(null) }
+            val imageUri = rememberSaveable { mutableStateOf<Uri?>(null) }
+            val bitmapImage = rememberSaveable { mutableStateOf<Bitmap?>(null) }
+            val photoUri = remember { mutableStateOf<Uri?>(null) }
 
             val galleryLauncher =
                 rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
-                    imageUri = uri
+                    imageUri.value = uri
                     bitmapImage.value = null
                 }
 
-            val cameraLauncher =
-                rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.TakePicturePreview(),
-                    onResult = {
-                        bitmapImage.value = it
-                        imageUri = null
-                    })
+            val cameraLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.TakePicture()
+            ) { isSaved ->
+                if (isSaved) {
+                    imageUri.value = photoUri.value
+                    bitmapImage.value = null
+                }
+            }
+
+            val file = File(context.cacheDir, "temp_photo_${System.currentTimeMillis()}.jpg")
+            photoUri.value = FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                file
+            )
+
 
             val cameraPermission =
                 rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission()
-                ) { isGranted: Boolean ->
+                ) { isGranted ->
                     if (isGranted) {
-                        cameraLauncher.launch(null)
+                        cameraLauncher.launch(photoUri.value)
+                        //cameraLauncher.launch(null)
                     } else {
-                        Toast.makeText(context, "Permission was not granted", Toast.LENGTH_SHORT)
-                            .show()
-
+                        Toast.makeText(context, "Camera permission was not granted", Toast.LENGTH_SHORT).show()
                     }
                 }
 
             val galleryPermission =
                 rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission()
-                ) { isGranted: Boolean ->
+                ) { isGranted ->
                     if (isGranted) {
                         galleryLauncher.launch("image/*")
                     } else {
-                        Toast.makeText(context, "Permission was not granted", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(context, "Gallery permission was not granted", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -119,43 +118,45 @@ class MainActivity : ComponentActivity() {
                         contentAlignment = Alignment.TopCenter
                     ) {
 
+                        if (imageUri.value != null) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(imageUri.value)
+                                    .crossfade(true)
+                                    //placeholder(R.drawable.placeholder) // Add a placeholder image
+                                    //.error(R.drawable.vfkra8jkbuffpdpvtj4okcoabd) // Add an error image
+                                    .build(),
+                                contentDescription = "Selected Image",
+                                contentScale = ContentScale.Inside,
+                                modifier = Modifier
+                                    .padding(vertical = 25.dp)
+                                    .fillMaxWidth(0.9f)
+                                    .fillMaxHeight(0.5f)
+                            )
 
-                        if (bitmapImage.value != null || imageUri != null) {
-                            if (imageUri != null) {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(imageUri)
-                                        .build(),
-                                    contentDescription = "Gallery Image",
-                                    contentScale = ContentScale.Inside,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .fillMaxHeight(0.8f)
-                                )
-                            }
-
-                            if (bitmapImage.value != null) {
-                                Image(
-                                    bitmap = bitmapImage.value!!.asImageBitmap(),
-                                    contentDescription = "Camera Image",
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .padding(vertical = 10.dp)
-                                        .fillMaxWidth()
-                                        .fillMaxHeight(0.5f)
-                                )
-                            }
-                        } else {
-                            Spacer(modifier = Modifier.padding(25.dp))
+                        } else if (bitmapImage.value != null) {
+                            AsyncImage(
+                                model = bitmapImage.value,
+                                contentDescription = "Captured Image",
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier
+                                    .padding(vertical = 50.dp)
+                                    .fillMaxWidth(0.9f)
+                                    .fillMaxHeight(0.8f)
+                            )
+                        }
+                        else {
                             Column(
+                                modifier = Modifier.padding(vertical = 25.dp),
                                 verticalArrangement = Arrangement.Top,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Image(
                                     painter = painterResource(id = R.drawable.icn),
                                     contentDescription = "No photo",
-                                    modifier = Modifier.size(150.dp),
-                                    contentScale = ContentScale.Crop
+                                    modifier = Modifier
+                                        .size(150.dp),
+                                    //contentScale = ContentScale.Fit
                                 )
                                 Text(
                                     text = "TourScan",
@@ -163,10 +164,11 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
+
                         Row(
                             modifier = Modifier
+                                .padding(vertical = 25.dp)
                                 .fillMaxWidth()
-                                .padding(bottom = 24.dp)
                                 .align(alignment = Alignment.BottomCenter),
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
@@ -174,6 +176,7 @@ class MainActivity : ComponentActivity() {
                             Button(
                                 onClick = {
                                     cameraPermission.launch(android.Manifest.permission.CAMERA)
+                                    //cameraLauncher.launch(photoUri.value) // Launch the camera with full-quality URI
                                 },
                                 modifier = Modifier.size(width = 160.dp, height = 60.dp),
                                 colors = ButtonDefaults.buttonColors(
@@ -188,8 +191,16 @@ class MainActivity : ComponentActivity() {
 
                             Button(
                                 onClick = {
-                                    //galleryPermission.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                                    galleryPermission.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+                                    when {
+                                        // ANDROID  12+
+                                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                                            galleryPermission.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+                                        }
+                                        else -> {
+                                            // ANDROID 10, 11
+                                            galleryPermission.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                                        }
+                                    }
                                 },
                                 modifier = Modifier.size(width = 160.dp, height = 60.dp),
                                 colors = ButtonDefaults.buttonColors(
@@ -202,9 +213,9 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "Open Gallery", fontSize = 16.sp)
                             }
                         }
-
                     }
                 }
+
             }
         }
     }
