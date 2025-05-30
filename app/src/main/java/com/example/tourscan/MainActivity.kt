@@ -11,6 +11,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,15 +25,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -178,15 +180,12 @@ class MainActivity : ComponentActivity() {
                                     cameraPermission.launch(android.Manifest.permission.CAMERA)
                                     //cameraLauncher.launch(photoUri.value) // Launch the camera with full-quality URI
                                 },
-                                modifier = Modifier.size(width = 160.dp, height = 60.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Black,
-                                    contentColor = Color.White,
-                                    disabledContainerColor = Color.Gray,
-                                    disabledContentColor = Color.LightGray
-                                )
                             ) {
-                                Text(text = "Open Camera", fontSize = 16.sp)
+                                Icon(
+                                    imageVector = Icons.Rounded.CameraAlt,
+                                    contentDescription = "Camera Icon",
+                                    modifier = Modifier.size(50.dp)
+                                )
                             }
 
                             Button(
@@ -202,15 +201,12 @@ class MainActivity : ComponentActivity() {
                                         }
                                     }
                                 },
-                                modifier = Modifier.size(width = 160.dp, height = 60.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Black,
-                                    contentColor = Color.White,
-                                    disabledContainerColor = Color.Gray,
-                                    disabledContentColor = Color.LightGray
-                                )
                             ) {
-                                Text(text = "Open Gallery", fontSize = 16.sp)
+                                Icon(
+                                    imageVector = Icons.Filled.Photo,
+                                    contentDescription = "Gallery Icon",
+                                    modifier = Modifier.size(50.dp)
+                                )
                             }
                         }
                     }
