@@ -13,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,11 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -143,8 +149,8 @@ class MainActivity : ComponentActivity() {
                                 contentScale = ContentScale.Fit,
                                 modifier = Modifier
                                     .padding(vertical = 50.dp)
-                                    .fillMaxWidth(0.9f)
-                                    .fillMaxHeight(0.8f)
+                                    .fillMaxWidth(0.5f)
+                                    .fillMaxHeight(0.5f)
                             )
                         }
                         else {
@@ -175,39 +181,65 @@ class MainActivity : ComponentActivity() {
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Button(
-                                onClick = {
-                                    cameraPermission.launch(android.Manifest.permission.CAMERA)
-                                    //cameraLauncher.launch(photoUri.value) // Launch the camera with full-quality URI
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.CameraAlt,
-                                    contentDescription = "Camera Icon",
-                                    modifier = Modifier.size(50.dp)
-                                )
-                            }
-
-                            Button(
-                                onClick = {
-                                    when {
-                                        // ANDROID  12+
-                                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                                            galleryPermission.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
-                                        }
-                                        else -> {
-                                            // ANDROID 10, 11
-                                            galleryPermission.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                                        }
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Button(
+                                        onClick = {
+                                            cameraPermission.launch(android.Manifest.permission.CAMERA)
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.CameraAlt,
+                                            contentDescription = "Camera Icon",
+                                            modifier = Modifier.size(50.dp),
+                                            tint = Color.White
+                                        )
                                     }
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Photo,
-                                    contentDescription = "Gallery Icon",
-                                    modifier = Modifier.size(50.dp)
-                                )
-                            }
+
+                                    Button(
+                                        onClick = {
+                                            Toast.makeText(context, "Navigate to photo list screen", Toast.LENGTH_SHORT).show()
+                                            // TODO: Replace with navigation to photo list
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF334859))
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.List,
+                                            contentDescription = "Photo List Icon",
+                                            modifier = Modifier.size(32.dp),
+                                            tint = Color.White
+                                        )
+                                    }
+
+                                    Button(
+                                        onClick = {
+                                            when {
+                                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                                                    galleryPermission.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+                                                }
+                                                else -> {
+                                                    galleryPermission.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                                                }
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Photo,
+                                            contentDescription = "Gallery Icon",
+                                            modifier = Modifier.size(50.dp),
+                                            tint = Color.White
+                                        )
+                                    }
+
+                                }
+
                         }
                     }
                 }

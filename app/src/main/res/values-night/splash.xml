@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.TourScan.MySplash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/black</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/gig</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/xxx</item>
         <item name="postSplashScreenTheme">@style/Theme.TourScan</item>
     </style>
 </resources>
