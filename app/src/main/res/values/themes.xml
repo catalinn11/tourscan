@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MySplsh" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/bk</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/xxx</item>
-        <item name="postSplashScreenTheme">@style/Theme.TourScan</item>
-    </style>
+<!--    <style name="Theme.MySplsh" parent="Theme.SplashScreen">-->
+<!--        <item name="windowSplashScreenBackground">@color/bk</item>-->
+<!--        <item name="windowSplashScreenAnimatedIcon">@drawable/xxx</item>-->
+<!--        <item name="postSplashScreenTheme">@style/Theme.TourScan</item>-->
+<!--    </style>-->
 
     <style name="Theme.TourScan" parent="android:Theme.Material.Light.NoActionBar"/>
 

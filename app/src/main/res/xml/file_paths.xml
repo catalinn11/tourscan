@@ -1,3 +1,4 @@
-<paths>
-    <cache-path name="images" path="." />
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <files-path name="internal_photos" path="photos/" />
+    <cache-path name="cache" path="." />
 </paths>

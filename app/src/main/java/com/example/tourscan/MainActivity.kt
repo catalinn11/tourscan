@@ -173,74 +173,89 @@ class MainActivity : ComponentActivity() {
                         }
 
 
-                        Row(
+                        Box(
                             modifier = Modifier
-                                .padding(vertical = 25.dp)
-                                .fillMaxWidth()
-                                .align(alignment = Alignment.BottomCenter),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically
+                                .fillMaxSize()
+                                .padding(it)
                         ) {
+
+                            // ────────────────────────────────────────────
+                            // Modern Floating Bottom Panel
+                            // ────────────────────────────────────────────
+                            Card(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(bottom = 25.dp)
+                                    .fillMaxWidth(0.92f),
+                                shape = RoundedCornerShape(28.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0xF20F1113) // semi-transparent modern panel
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 12.dp
+                                )
+                            ) {
                                 Row(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(10.dp),
+                                        .padding(horizontal = 26.dp, vertical = 14.dp)
+                                        .fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
+
+                                    // Camera Button
                                     Button(
-                                        onClick = {
-                                            cameraPermission.launch(android.Manifest.permission.CAMERA)
-                                        },
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                                        onClick = { cameraPermission.launch(android.Manifest.permission.CAMERA) },
+                                        shape = RoundedCornerShape(20.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2)),
+                                        modifier = Modifier.size(70.dp)
                                     ) {
                                         Icon(
                                             imageVector = Icons.Rounded.CameraAlt,
-                                            contentDescription = "Camera Icon",
-                                            modifier = Modifier.size(50.dp),
-                                            tint = Color.White
-                                        )
-                                    }
-
-                                    Button(
-                                        onClick = {
-                                            Toast.makeText(context, "Navigate to photo list screen", Toast.LENGTH_SHORT).show()
-                                            // TODO: Replace with navigation to photo list
-                                        },
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF334859))
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.List,
-                                            contentDescription = "Photo List Icon",
+                                            contentDescription = "Camera",
                                             modifier = Modifier.size(32.dp),
                                             tint = Color.White
                                         )
                                     }
 
+                                    // Photo list Button
                                     Button(
-                                        onClick = {
-                                            when {
-                                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                                                    galleryPermission.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
-                                                }
-                                                else -> {
-                                                    galleryPermission.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                                                }
-                                            }
-                                        },
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))
+                                        onClick = { Toast.makeText(context, "Navigate to photo list screen", Toast.LENGTH_SHORT).show() },
+                                        shape = RoundedCornerShape(20.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF334859)),
+                                        modifier = Modifier.size(70.dp)
                                     ) {
                                         Icon(
-                                            imageVector = Icons.Filled.Photo,
-                                            contentDescription = "Gallery Icon",
-                                            modifier = Modifier.size(50.dp),
+                                            imageVector = Icons.AutoMirrored.Filled.List,
+                                            contentDescription = "Photo List",
+                                            modifier = Modifier.size(32.dp),
                                             tint = Color.White
                                         )
                                     }
 
+                                    // Gallery Button
+                                    Button(
+                                        onClick = {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                                                galleryPermission.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+                                            else
+                                                galleryPermission.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                                        },
+                                        shape = RoundedCornerShape(20.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C)),
+                                        modifier = Modifier.size(70.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Photo,
+                                            contentDescription = "Gallery",
+                                            modifier = Modifier.size(32.dp),
+                                            tint = Color.White
+                                        )
+                                    }
                                 }
-
+                            }
                         }
+
                     }
                 }
 
