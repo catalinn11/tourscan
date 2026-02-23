@@ -9,7 +9,6 @@ data class PhotoEntity(
     @PrimaryKey val id: UUID = UUID.randomUUID(),
     val uri: String,
     val analyzed: Boolean = false,
-    val title: String? = null,
     val description: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 )

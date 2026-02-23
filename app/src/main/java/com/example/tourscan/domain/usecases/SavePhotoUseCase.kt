@@ -10,15 +10,14 @@ class SavePhotoUseCase(
     private val context: Context,
     private val repository: PhotoRepository
 ) {
-    suspend operator fun invoke(uri: Uri) {
+    suspend operator fun invoke(uri: Uri, description: String? = null) {
         // Save file to internal storage
         val internalPath = FileUtil.saveImageToInternalStorage(context, uri)
 
         val photoEntity = PhotoEntity(
             uri = internalPath, // Path for image
-            title = "New Photo",
-            description = "To be analyzed...",
-            analyzed = false
+            description = description, // Inference result
+            analyzed = true
         )
 
         // Insert in Room

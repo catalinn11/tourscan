@@ -21,10 +21,10 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("InlinedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startKoin {
-            androidContext(this@MainActivity)
-            modules(appModule)
-        }
+//        startKoin {
+//            androidContext(this@MainActivity)
+//            modules(appModule)
+//        }
         installSplashScreen()
         enableEdgeToEdge()
         setContent {
