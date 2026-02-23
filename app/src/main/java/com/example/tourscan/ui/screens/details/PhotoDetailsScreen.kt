@@ -99,14 +99,6 @@ fun PhotoDetailsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = photo.title ?: "Untitled Photo",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
                 text = photo.description ?: "No description.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -141,6 +133,6 @@ fun LoadingDetails() {
 
 fun formatTimestamp(timeMillis: Long): String {
     val date = Date(timeMillis)
-    val formatter = SimpleDateFormat("MMM dd, yyyy • HH:mm", Locale.getDefault())
+    val formatter = SimpleDateFormat("dd MMMM yyyy • HH:mm", Locale.getDefault())
     return formatter.format(date)
 }

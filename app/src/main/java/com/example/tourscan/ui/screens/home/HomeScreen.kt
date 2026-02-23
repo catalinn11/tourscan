@@ -12,17 +12,19 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -48,29 +50,43 @@ import java.io.File
 @Composable
 fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
 
+    // Inject ViewModel
     val viewModel: HomeViewModel = getViewModel()
     val context = LocalContext.current
 
+    // Collect UI State from ViewModel (Analysis status & Result)
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Local State for the Image Preview URI
     val imageUri = rememberSaveable { mutableStateOf<Uri?>(null) }
+    // Temporary URI for Camera capture
     val photoUri = rememberSaveable { mutableStateOf<Uri?>(null) }
 
+    // --- LAUNCHERS ---
+
+    // 1. Gallery Launcher
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
             imageUri.value = uri
-            viewModel.savePhoto(uri.toString())
+            // Pass 'false' for isFromCamera -> Do NOT save to DB
+            viewModel.onPhotoCaptured(uri.toString(), isFromCamera = false)
         }
     }
 
+    // 2. Camera Launcher
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { saved ->
         if (saved) {
             imageUri.value = photoUri.value
-            viewModel.savePhoto(photoUri.value.toString())
+            // Pass 'true' for isFromCamera -> Save to DB
+            viewModel.onPhotoCaptured(photoUri.value.toString(), isFromCamera = true)
         }
     }
+
+    // --- PERMISSIONS ---
 
     val cameraPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -85,6 +101,8 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
         if (granted) galleryLauncher.launch("image/*")
         else Toast.makeText(context, "Gallery permission denied", Toast.LENGTH_SHORT).show()
     }
+
+    // --- UI LAYOUT ---
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -102,6 +120,7 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
+                // --- HEADER (Logo) ---
                 Box(
                     modifier = Modifier
                         .padding(top = 20.dp)
@@ -118,13 +137,16 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                     )
                 }
 
+                // --- MAIN CONTENT AREA ---
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
+                    // Show Intro if no image selected
                     AnimatedVisibility(
                         visible = imageUri.value == null,
                         enter = fadeIn(),
@@ -134,6 +156,7 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                         IntroDisplayContent()
                     }
 
+                    // Show Photo Result if image selected
                     AnimatedVisibility(
                         visible = imageUri.value != null,
                         enter = fadeIn(),
@@ -145,15 +168,21 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                             contentAlignment = Alignment.Center
                         ) {
                             imageUri.value?.let { uri ->
-                                PhotoResultCard(uri)
+                                PhotoResultCard(
+                                    uri = uri,
+                                    isAnalyzing = uiState.isAnalyzing,
+                                    detectedLabel = uiState.detectedLabel
+                                )
                             }
                         }
                     }
                 }
 
+                // --- BOTTOM BAR ---
                 GlassBottomBar(
                     modifier = Modifier.padding(bottom = 20.dp),
                     onCameraClick = {
+                        // Create temp file for camera
                         val newFile = File(context.cacheDir, "temp_${System.currentTimeMillis()}.jpg")
                         photoUri.value = FileProvider.getUriForFile(
                             context,
@@ -163,6 +192,7 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                         cameraPermission.launch(Manifest.permission.CAMERA)
                     },
                     onGalleryClick = {
+                        // Handle permissions based on Android version
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                             galleryPermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
                         else
@@ -177,12 +207,16 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
     }
 }
 
+// ================= SUB-COMPONENTS =================
+
 @Composable
 fun IntroDisplayContent() {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(modifier = Modifier.height(20.dp))
+
         Text(
             text = "TourScan",
             style = MaterialTheme.typography.headlineMedium,
@@ -224,20 +258,34 @@ fun IntroDisplayContent() {
 }
 
 @Composable
-fun PhotoResultCard(uri: Uri) {
+fun PhotoResultCard(
+    uri: Uri,
+    isAnalyzing: Boolean,
+    detectedLabel: String?
+) {
     val context = LocalContext.current
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        shape = RoundedCornerShape(24.dp),
-        elevation = CardDefaults.cardElevation(10.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    // Gradient for the result border
+    val resultBorder = Brush.horizontalGradient(
+        colors = listOf(
+            Color(0xFF004494),
+            Color(0xFFD4AF37),
+            Color(0xFFCE1126)
+        )
+    )
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
+        // 1. Photo Card (Clean, no text overlay)
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(10.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(context)
@@ -248,29 +296,57 @@ fun PhotoResultCard(uri: Uri) {
                 contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxWidth()
             )
+        }
 
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // 2. Inference Result (Displayed BELOW the photo)
+        AnimatedVisibility(visible = isAnalyzing || detectedLabel != null) {
             Surface(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
+                    // Apply border only if we have a final result
+                    .then(
+                        if (!isAnalyzing && detectedLabel != null)
+                            Modifier.border(1.5.dp, resultBorder, RoundedCornerShape(50))
+                        else Modifier
+                    ),
                 shape = RoundedCornerShape(50),
-                color = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.8f)
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                shadowElevation = 0.dp
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(14.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.inverseOnSurface
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Analyzing...",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.inverseOnSurface
-                    )
+                    if (isAnalyzing) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Analyzing...",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    } else if (detectedLabel != null) {
+                        Icon(
+                            imageVector = Icons.Filled.AutoAwesome,
+                            contentDescription = null,
+                            modifier = Modifier.size(22.dp),
+                            tint = Color(0xFFD4AF37) // Gold tint
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        // Capitalize the first letter
+                        Text(
+                            text = detectedLabel.replaceFirstChar { it.uppercase() },
+                            style = MaterialTheme.typography.headlineSmall, // Bigger text
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             }
         }
@@ -284,6 +360,7 @@ fun GlassBottomBar(
     onGalleryClick: () -> Unit,
     onPhotosClick: () -> Unit
 ) {
+    // Romania Flag Colors (faint for background)
     val romaniaBlurGradient = Brush.horizontalGradient(
         colors = listOf(
             Color(0xFF004494).copy(alpha = 0.15f),
@@ -292,6 +369,7 @@ fun GlassBottomBar(
         )
     )
 
+    // Romania Flag Colors (more visible for border)
     val borderGradient = Brush.horizontalGradient(
         colors = listOf(
             Color(0xFF004494).copy(alpha = 0.3f),
@@ -325,10 +403,11 @@ fun GlassBottomBar(
                     imageVector = Icons.Rounded.CameraAlt,
                     contentDescription = "Camera",
                     modifier = Modifier.size(28.dp),
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
             }
 
+            // Divider
             Box(
                 modifier = Modifier
                     .height(24.dp)
@@ -336,6 +415,7 @@ fun GlassBottomBar(
                     .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             )
 
+            // Collection Button (Center)
             IconButton(
                 onClick = onPhotosClick,
                 modifier = Modifier.size(50.dp)
@@ -348,6 +428,7 @@ fun GlassBottomBar(
                 )
             }
 
+            // Divider
             Box(
                 modifier = Modifier
                     .height(24.dp)
@@ -360,7 +441,7 @@ fun GlassBottomBar(
                     imageVector = Icons.Filled.Photo,
                     contentDescription = "Gallery",
                     modifier = Modifier.size(28.dp),
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
             }
         }
