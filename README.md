@@ -16,16 +16,6 @@ TourScan este o aplicație modernă pentru Android, creată pentru a te ajuta s�
 
 ---
 
-## 📱 Capturi de ecran
-
-| Ecran Principal | Analizare Fotografie | Istoric Scanări | Detalii Locație |
-| :---: | :---: | :---: | :---: |
-| ![Home](https://via.placeholder.com/250x500.png?text=Ecran+Principal) | ![Loading](https://via.placeholder.com/250x500.png?text=Analizare) | ![Grid](https://via.placeholder.com/250x500.png?text=Grilă+Foto) | ![Details](https://via.placeholder.com/250x500.png?text=Detalii) |
-
-*(Notă: Înlocuiește linkurile de mai sus cu capturi de ecran reale ale aplicației tale).*
-
----
-
 ## 🛠️ Tehnologii Folosite
 
 Acest proiect folosește cele mai noi standarde și biblioteci pentru dezvoltarea nativă pe Android:
@@ -46,17 +36,3 @@ Acest proiect folosește cele mai noi standarde și biblioteci pentru dezvoltare
 * `ui/screens/photolist/`: Gestionează istoricul locațiilor scanate, afișate într-o grilă dinamică pe 3 coloane.
 * `ui/screens/details/`: Ecranul care afișează imaginea mărită și informațiile detaliate despre obiectivul identificat.
 * `ui/components/`: Componente vizuale reutilizabile în întreaga aplicație.
-
----
-
-## 🚀 Cum să rulezi proiectul
-
-### Cerințe preliminare
-* Android Studio (se recomandă ultima versiune stabilă)
-* Minimum SDK: 24
-* Target SDK: 34+
-
-### Instalare
-1. Clonează acest repository:
-   ```bash
-   git clone [https://github.com/username-ul-tau/TourScan.git](https://github.com/username-ul-tau/TourScan.git)
