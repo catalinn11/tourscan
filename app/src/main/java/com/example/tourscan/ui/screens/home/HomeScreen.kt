@@ -50,43 +50,30 @@ import java.io.File
 @Composable
 fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
 
-    // Inject ViewModel
     val viewModel: HomeViewModel = getViewModel()
     val context = LocalContext.current
-
-    // Collect UI State from ViewModel (Analysis status & Result)
     val uiState by viewModel.uiState.collectAsState()
 
-    // Local State for the Image Preview URI
     val imageUri = rememberSaveable { mutableStateOf<Uri?>(null) }
-    // Temporary URI for Camera capture
     val photoUri = rememberSaveable { mutableStateOf<Uri?>(null) }
 
-    // --- LAUNCHERS ---
-
-    // 1. Gallery Launcher
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
             imageUri.value = uri
-            // Pass 'false' for isFromCamera -> Do NOT save to DB
             viewModel.onPhotoCaptured(uri.toString(), isFromCamera = false)
         }
     }
 
-    // 2. Camera Launcher
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { saved ->
         if (saved) {
             imageUri.value = photoUri.value
-            // Pass 'true' for isFromCamera -> Save to DB
             viewModel.onPhotoCaptured(photoUri.value.toString(), isFromCamera = true)
         }
     }
-
-    // --- PERMISSIONS ---
 
     val cameraPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -101,8 +88,6 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
         if (granted) galleryLauncher.launch("image/*")
         else Toast.makeText(context, "Gallery permission denied", Toast.LENGTH_SHORT).show()
     }
-
-    // --- UI LAYOUT ---
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -120,7 +105,6 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // --- HEADER (Logo) ---
                 Box(
                     modifier = Modifier
                         .padding(top = 20.dp)
@@ -137,16 +121,14 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                     )
                 }
 
-                // --- MAIN CONTENT AREA ---
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.dp, vertical = 32.dp), // STRICT VERTICAL SPACING BARRIER
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // Show Intro if no image selected
                     AnimatedVisibility(
                         visible = imageUri.value == null,
                         enter = fadeIn(),
@@ -156,7 +138,6 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                         IntroDisplayContent()
                     }
 
-                    // Show Photo Result if image selected
                     AnimatedVisibility(
                         visible = imageUri.value != null,
                         enter = fadeIn(),
@@ -178,11 +159,9 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                     }
                 }
 
-                // --- BOTTOM BAR ---
                 GlassBottomBar(
                     modifier = Modifier.padding(bottom = 20.dp),
                     onCameraClick = {
-                        // Create temp file for camera
                         val newFile = File(context.cacheDir, "temp_${System.currentTimeMillis()}.jpg")
                         photoUri.value = FileProvider.getUriForFile(
                             context,
@@ -192,7 +171,6 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                         cameraPermission.launch(Manifest.permission.CAMERA)
                     },
                     onGalleryClick = {
-                        // Handle permissions based on Android version
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                             galleryPermission.launch(Manifest.permission.READ_MEDIA_IMAGES)
                         else
@@ -206,8 +184,6 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
         }
     }
 }
-
-// ================= SUB-COMPONENTS =================
 
 @Composable
 fun IntroDisplayContent() {
@@ -265,7 +241,6 @@ fun PhotoResultCard(
 ) {
     val context = LocalContext.current
 
-    // Gradient for the result border
     val resultBorder = Brush.horizontalGradient(
         colors = listOf(
             Color(0xFF004494),
@@ -275,14 +250,14 @@ fun PhotoResultCard(
     )
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        // 1. Photo Card (Clean, no text overlay)
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .weight(1f, fill = false), // ALLOWS SHRINKING WHEN TEXT APPEARS
             shape = RoundedCornerShape(24.dp),
             elevation = CardDefaults.cardElevation(10.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -294,17 +269,17 @@ fun PhotoResultCard(
                     .build(),
                 contentDescription = "Selected Photo",
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight() // PREVENTS FORCED STRETCHING
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        // 2. Inference Result (Displayed BELOW the photo)
         AnimatedVisibility(visible = isAnalyzing || detectedLabel != null) {
             Surface(
                 modifier = Modifier
-                    // Apply border only if we have a final result
                     .then(
                         if (!isAnalyzing && detectedLabel != null)
                             Modifier.border(1.5.dp, resultBorder, RoundedCornerShape(50))
@@ -335,14 +310,13 @@ fun PhotoResultCard(
                             imageVector = Icons.Filled.AutoAwesome,
                             contentDescription = null,
                             modifier = Modifier.size(22.dp),
-                            tint = Color(0xFFD4AF37) // Gold tint
+                            tint = Color(0xFFD4AF37)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
 
-                        // Capitalize the first letter
                         Text(
                             text = detectedLabel.replaceFirstChar { it.uppercase() },
-                            style = MaterialTheme.typography.headlineSmall, // Bigger text
+                            style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -360,7 +334,6 @@ fun GlassBottomBar(
     onGalleryClick: () -> Unit,
     onPhotosClick: () -> Unit
 ) {
-    // Romania Flag Colors (faint for background)
     val romaniaBlurGradient = Brush.horizontalGradient(
         colors = listOf(
             Color(0xFF004494).copy(alpha = 0.15f),
@@ -369,7 +342,6 @@ fun GlassBottomBar(
         )
     )
 
-    // Romania Flag Colors (more visible for border)
     val borderGradient = Brush.horizontalGradient(
         colors = listOf(
             Color(0xFF004494).copy(alpha = 0.3f),
@@ -407,7 +379,6 @@ fun GlassBottomBar(
                 )
             }
 
-            // Divider
             Box(
                 modifier = Modifier
                     .height(24.dp)
@@ -415,7 +386,6 @@ fun GlassBottomBar(
                     .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             )
 
-            // Collection Button (Center)
             IconButton(
                 onClick = onPhotosClick,
                 modifier = Modifier.size(50.dp)
@@ -428,7 +398,6 @@ fun GlassBottomBar(
                 )
             }
 
-            // Divider
             Box(
                 modifier = Modifier
                     .height(24.dp)

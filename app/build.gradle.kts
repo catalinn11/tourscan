@@ -50,6 +50,7 @@ dependencies {
     implementation (libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation (libs.androidx.room.ktx)
+    implementation(libs.zetetic.sqlcipher.android)
 
     // Retrofit + OkHttp
     implementation (libs.gson)
