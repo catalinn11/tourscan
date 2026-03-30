@@ -1,82 +1,79 @@
 package com.example.tourscan.utils
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
+import com.example.tourscan.data.remote.SupabaseClient
+import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
-import androidx.core.graphics.scale
+import java.util.UUID
 
 object FileUtil {
-    private const val MAX_DIMENSION = 1280  // px
-    private const val JPEG_QUALITY = 75     // %
 
-    suspend fun saveImageToInternalStorage(context: Context, uri: Uri): String = withContext(Dispatchers.IO) {
+    @SuppressLint("HardwareIds")
+    suspend fun uploadToSupabase(context: Context, uri: Uri): String = withContext(Dispatchers.IO) {
         val inputStream = context.contentResolver.openInputStream(uri)
-        val originalBitmap = BitmapFactory.decodeStream(inputStream)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
         inputStream?.close()
 
-        // Resize Image
-        val bitmap = resizeBitmap(originalBitmap)
+        // Full quality, no resize (50MB bucket limit)
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val imageBytes = baos.toByteArray()
 
-        val fileName = "tourscan_${System.currentTimeMillis()}.jpg"
-        val file = File(context.filesDir, fileName)
-
-        FileOutputStream(file).use { outputStream ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, outputStream)
-        }
-
-        // Cleanup
-        if (bitmap !== originalBitmap) originalBitmap.recycle()
         bitmap.recycle()
 
-        file.absolutePath
+        // Upload to Supabase Storage (in device-specific folder)
+        val deviceId = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val fileName = "$deviceId/tourscan_${UUID.randomUUID()}.jpg"
+        val bucket = SupabaseClient.client.storage.from(SupabaseClient.BUCKET_NAME)
+        bucket.upload(fileName, imageBytes)
+
+        // Return public URL
+        bucket.publicUrl(fileName)
     }
 
-    suspend fun saveImageToGallery(context: Context, internalPath: String): Boolean = withContext(Dispatchers.IO) {
+    suspend fun saveImageToGallery(context: Context, imageSource: String): Boolean = withContext(Dispatchers.IO) {
         try {
-            val file = File(internalPath)
-            if (!file.exists()) return@withContext false
+            // Get image bytes from URL or local file
+            val imageBytes: ByteArray = if (imageSource.startsWith("http")) {
+                java.net.URL(imageSource).readBytes()
+            } else {
+                val file = File(imageSource)
+                if (!file.exists()) return@withContext false
+                file.readBytes()
+            }
 
             val fileName = "TourScan_${System.currentTimeMillis()}.jpg"
 
             val contentValues = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
                 put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/TourScan")
-                    put(MediaStore.Images.Media.IS_PENDING, 1)
-                }
+                put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/TourScan")
+                put(MediaStore.Images.Media.IS_PENDING, 1)
             }
 
-            val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            } else {
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            }
+            val collection = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
 
             val imageUri = context.contentResolver.insert(collection, contentValues)
                 ?: return@withContext false
 
             context.contentResolver.openOutputStream(imageUri)?.use { outputStream ->
-                file.inputStream().use { inputStream ->
-                    inputStream.copyTo(outputStream)
-                }
+                outputStream.write(imageBytes)
             }
 
-            // Mark as complete on Android Q+
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                contentValues.clear()
-                contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                context.contentResolver.update(imageUri, contentValues, null, null)
-            }
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            context.contentResolver.update(imageUri, contentValues, null, null)
 
             true
         } catch (e: Exception) {
@@ -84,14 +81,5 @@ object FileUtil {
             false
         }
     }
-
-    private fun resizeBitmap(bitmap: Bitmap): Bitmap {
-        val width = bitmap.width
-        val height = bitmap.height
-        if (width <= MAX_DIMENSION && height <= MAX_DIMENSION) return bitmap
-
-        val ratio = minOf(MAX_DIMENSION.toFloat() / width, MAX_DIMENSION.toFloat() / height)
-        return bitmap.scale((width * ratio).toInt(), (height * ratio).toInt())
-    }
-
 }
+

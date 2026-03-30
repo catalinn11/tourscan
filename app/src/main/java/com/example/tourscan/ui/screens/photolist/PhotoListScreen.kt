@@ -89,7 +89,7 @@ fun PhotoListScreen(navController: NavController) {
     ) { padding ->
 
         when {
-            uiState.loading -> {
+            uiState.loading || (!uiState.imagesReady && uiState.photos.isNotEmpty()) -> {
                 LoadingShimmer(modifier = Modifier.padding(padding))
             }
 
