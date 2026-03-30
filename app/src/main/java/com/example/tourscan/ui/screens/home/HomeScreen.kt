@@ -125,7 +125,7 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 32.dp), // STRICT VERTICAL SPACING BARRIER
+                        .padding(horizontal = 16.dp, vertical = 32.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -257,9 +257,9 @@ fun PhotoResultCard(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f, fill = false), // ALLOWS SHRINKING WHEN TEXT APPEARS
+                .weight(1f, fill = false),
             shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(10.dp),
+            elevation = CardDefaults.cardElevation(0.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             AsyncImage(
@@ -271,7 +271,7 @@ fun PhotoResultCard(
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight() // PREVENTS FORCED STRETCHING
+                    .wrapContentHeight()
             )
         }
 

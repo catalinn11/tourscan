@@ -14,6 +14,10 @@ class PhotoRepository(private val photoDao: PhotoDao) {
 
     suspend fun getPhotoByCreatedAt(createdAt: Long): PhotoEntity? =
         photoDao.getByCreatedAt(createdAt)
+
+
+    suspend fun deleteAllPhotos() =
+        photoDao.deleteAll()
 }
 
 

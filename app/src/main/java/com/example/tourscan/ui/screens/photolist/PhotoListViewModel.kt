@@ -2,13 +2,14 @@ package com.example.tourscan.ui.screens.photolist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tourscan.data.local.PhotoEntity
 import com.example.tourscan.data.repository.PhotoRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 class PhotoListViewModel(private val repo: PhotoRepository) : ViewModel() {
 
@@ -23,6 +24,23 @@ class PhotoListViewModel(private val repo: PhotoRepository) : ViewModel() {
                     photos = list
                 )
             }
+        }
+    }
+
+    fun deleteAllPhotos() {
+        viewModelScope.launch {
+            // 1. Get all file paths from existing flow
+            val uris = repo.getAllPhotos().first().map { it.uri }
+
+            // 2. Delete physical files from disk
+            withContext(Dispatchers.IO) {
+                uris.forEach { path ->
+                    File(path).delete()
+                }
+            }
+
+            // 3. Clear all records from DB
+            repo.deleteAllPhotos()
         }
     }
 }

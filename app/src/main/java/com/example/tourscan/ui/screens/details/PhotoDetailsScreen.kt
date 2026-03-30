@@ -1,5 +1,6 @@
 package com.example.tourscan.ui.screens.details
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.SaveAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,13 +29,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.tourscan.utils.FileUtil
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -47,6 +53,8 @@ fun PhotoDetailsScreen(
 ) {
 
     val photo = viewModel.uiState.collectAsState().value
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     if (photo == null) {
         LoadingDetails()
@@ -62,6 +70,21 @@ fun PhotoDetailsScreen(
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            val saved = FileUtil.saveImageToGallery(context, photo.uri)
+                            val message = if (saved) "Photo saved to gallery" else "Failed to save photo"
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.SaveAlt,
+                            contentDescription = "Save to Gallery",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
