@@ -61,6 +61,26 @@ class PhotoListViewModel(
         _uiState.value = _uiState.value.copy(imagesReady = true)
     }
 
+    fun deletePhoto(createdAt: Long) {
+        viewModelScope.launch {
+            val photo = repo.getAllPhotos().first().find { it.createdAt == createdAt } ?: return@launch
+
+            withContext(Dispatchers.IO) {
+                try {
+                    val bucket = SupabaseClient.client.storage.from(SupabaseClient.BUCKET_NAME)
+                    val filePath = photo.uri.substringAfter("${SupabaseClient.BUCKET_NAME}/", "").takeIf { it.isNotEmpty() }
+                    if (filePath != null) {
+                        bucket.delete(listOf(filePath))
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            repo.deletePhoto(createdAt)
+        }
+    }
+
     fun deleteAllPhotos() {
         viewModelScope.launch {
             // 1. Get all photo URLs from existing flow

@@ -103,6 +103,9 @@ fun PhotoListScreen(navController: NavController) {
                     onClick = { createdAt ->
                         navController.navigate("photo_details/$createdAt")
                     },
+                    onDelete = { createdAt ->
+                        viewModel.deletePhoto(createdAt)
+                    },
                     modifier = Modifier.padding(padding)
                 )
             }

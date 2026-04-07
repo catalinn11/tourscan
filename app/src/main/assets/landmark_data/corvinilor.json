@@ -1,0 +1,48 @@
+{
+  "landmark_id": "corvin",
+  "landmark_name": "Corvin Castle",
+  "location": "Hunedoara, Hunedoara County, Romania",
+  "coordinates": {
+    "lat": 45.7497,
+    "lng": 22.8892
+  },
+  "google_maps_link": "https://maps.app.goo.gl/fnKeGy7y3xgAcSUU9",
+  "quick_facts": {
+    "built": "1446",
+    "architecture_style": "Gothic-Renaissance",
+    "recommended_visit_time": "2 hours",
+    "official_website": "http://www.castelulcorvinilor.ro/en/"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "history",
+      "title": "🏰 History",
+      "body": "Corvin Castle, also known as Hunyadi Castle or Hunedoara Castle, is one of the largest castles in Europe. It dates back to the 14th century, but its current Gothic-Renaissance appearance was largely shaped by John Hunyadi (Iancu de Hunedoara) between 1440 and 1456. Hunyadi was a celebrated military commander who repelled Ottoman invasions and served as regent of Hungary."
+    },
+    {
+      "id": 2,
+      "type": "history",
+      "title": "🗡️ Military Power",
+      "body": "The castle served as a key military stronghold during the campaigns against the Ottoman Empire in the 15th century. Its massive walls, towers, and defensive moat made it nearly impregnable. The castle features the impressive Knights\\' Hall, used for military councils, and the Diet Hall, where political decisions were made."
+    },
+    {
+      "id": 3,
+      "type": "legend",
+      "title": "🕳️ The Well Legend",
+      "body": "The castle\\'s well, dug to a depth of 28 meters, is surrounded by a famous legend. According to the story, three Turkish prisoners were promised their freedom if they dug to water. After 15 years of labor, they finally found water — but were still not released. It is said they carved an inscription on the well: 'You have water, but not heart.' The text is still visible today."
+    },
+    {
+      "id": 4,
+      "type": "architecture",
+      "title": "🏗️ Architecture",
+      "body": "Corvin Castle is a stunning example of Gothic architecture with Renaissance additions. It features the iconic round towers, a drawbridge over a dry moat, a bear pit, and elaborate stone carvings. The castle\\'s silhouette with its Gothic towers reflected in the Zlaști River makes it one of the most photographed medieval monuments in Romania."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Visitor Info",
+      "body": "Located in the city of Hunedoara in western Transylvania, Corvin Castle is about 18 km from Deva and 100 km from Timișoara. It appears on several international lists of most beautiful castles in the world. The castle hosts medieval festivals, concerts, and theatrical events throughout the year, making it an atmospheric destination in any season."
+    }
+  ]
+}

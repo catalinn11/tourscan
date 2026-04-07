@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.SaveAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -52,7 +53,8 @@ fun PhotoDetailsScreen(
     navController: NavController
 ) {
 
-    val photo = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsState().value
+    val photo = uiState.photo
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -84,6 +86,15 @@ fun PhotoDetailsScreen(
                             imageVector = Icons.Outlined.SaveAlt,
                             contentDescription = "Save to Gallery",
                             tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = {
+                        viewModel.deletePhoto { navController.popBackStack() }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Delete Photo",
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 },
@@ -134,6 +145,32 @@ fun PhotoDetailsScreen(
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
+
+            if (photo.model != null && photo.accuracy != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(0.95f),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(text = "🤖 AI Inference", style = MaterialTheme.typography.titleMedium, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Detection: ${photo.description}", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "Model: ${photo.model}", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "Accuracy: ${"%.1f".format(photo.accuracy * 100f)}%", style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+
+            uiState.landmarkData?.let { data ->
+                Spacer(modifier = Modifier.height(24.dp))
+                @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+                com.example.tourscan.ui.screens.home.LandmarkInfoCarousel(data = data)
+                Spacer(modifier = Modifier.height(32.dp))
+            }
         }
     }
 }

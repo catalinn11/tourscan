@@ -1,6 +1,7 @@
 package com.example.tourscan.ui.screens.home
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
@@ -9,24 +10,34 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.icons.filled.Photo
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.CameraAlt
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -106,18 +117,31 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
             ) {
 
                 Box(
-                    modifier = Modifier
-                        .padding(top = 20.dp)
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
-                        .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), CircleShape),
+                    modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.icn),
-                        contentDescription = "App Logo",
-                        modifier = Modifier.size(60.dp)
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .size(80.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
+                            .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.icn),
+                            contentDescription = "App Logo",
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+
+                    ModelSelectorDropdown(
+                        selectedModel = uiState.selectedModel,
+                        onModelSelected = { viewModel.switchModel(it) },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(top = 20.dp, end = 16.dp)
                     )
                 }
 
@@ -125,7 +149,7 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 32.dp),
+                        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -152,7 +176,59 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                                 PhotoResultCard(
                                     uri = uri,
                                     isAnalyzing = uiState.isAnalyzing,
-                                    detectedLabel = uiState.detectedLabel
+                                    detectedLabel = uiState.detectedLabel,
+                                    confidence = uiState.confidence,
+                                    landmarkData = uiState.landmarkData
+                                )
+                            }
+
+                            val isDark = isSystemInDarkTheme()
+                            // iOS-style glass material: translucent surface + border + shadow
+                            val glassBackground = if (isDark)
+                                Color(0xFF2C2C2E).copy(alpha = 0.72f)
+                            else
+                                Color.White.copy(alpha = 0.78f)
+                            val glassBorder = if (isDark)
+                                Color.White.copy(alpha = 0.14f)
+                            else
+                                Color.Black.copy(alpha = 0.07f)
+                            val iconColor = if (isDark) Color.White else Color(0xFF1C1C1E)
+
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(top = 10.dp, end = 10.dp)
+                                    .size(44.dp)
+                                    .shadow(
+                                        elevation = 8.dp,
+                                        shape = CircleShape,
+                                        spotColor = Color.Black.copy(alpha = 0.12f),
+                                        ambientColor = Color.Black.copy(alpha = 0.04f)
+                                    )
+                                    .clip(CircleShape)
+                                    .background(glassBackground)
+                                    .border(0.6.dp, glassBorder, CircleShape)
+                                    .clickable {
+                                        context.cacheDir.listFiles()
+                                            ?.filter { it.name.startsWith("temp_") }
+                                            ?.forEach { it.delete() }
+                                        val newFile = File(context.cacheDir, "temp_${System.currentTimeMillis()}.jpg")
+                                        photoUri.value = FileProvider.getUriForFile(
+                                            context,
+                                            "${context.packageName}.fileprovider",
+                                            newFile
+                                        )
+                                        imageUri.value = null
+                                        viewModel.resetPhoto()
+                                        cameraPermission.launch(Manifest.permission.CAMERA)
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Refresh,
+                                    contentDescription = "New Photo",
+                                    modifier = Modifier.size(20.dp),
+                                    tint = iconColor
                                 )
                             }
                         }
@@ -191,7 +267,7 @@ fun IntroDisplayContent() {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = "TourScan",
@@ -233,11 +309,14 @@ fun IntroDisplayContent() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhotoResultCard(
     uri: Uri,
     isAnalyzing: Boolean,
-    detectedLabel: String?
+    detectedLabel: String?,
+    confidence: Float?,
+    landmarkData: com.example.tourscan.data.model.LandmarkData?
 ) {
     val context = LocalContext.current
 
@@ -277,7 +356,7 @@ fun PhotoResultCard(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        AnimatedVisibility(visible = isAnalyzing || detectedLabel != null) {
+        AnimatedVisibility(visible = true) {
             Surface(
                 modifier = Modifier
                     .then(
@@ -314,14 +393,301 @@ fun PhotoResultCard(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
 
+                        val accuracyText = if (confidence != null) " - ${(confidence * 100).toInt()}%" else ""
                         Text(
-                            text = detectedLabel.replaceFirstChar { it.uppercase() },
+                            text = detectedLabel.replaceFirstChar { it.uppercase() } + accuracyText,
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = null,
+                            modifier = Modifier.size(22.dp),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Landmark could not be recognized",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                 }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        AnimatedVisibility(visible = !isAnalyzing && landmarkData != null) {
+            landmarkData?.let { data ->
+                LandmarkInfoCarousel(data)
+            }
+        }
+    }
+}
+
+sealed class ExpandedState {
+    object QuickFacts : ExpandedState()
+    object Location : ExpandedState()
+    data class Info(val card: com.example.tourscan.data.model.LandmarkCard) : ExpandedState()
+}
+
+@androidx.compose.foundation.ExperimentalFoundationApi
+@Composable
+fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
+    var expandedState by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<ExpandedState?>(null) }
+    val lazyListState = androidx.compose.foundation.lazy.rememberLazyListState()
+
+    androidx.compose.foundation.lazy.LazyRow(
+        state = lazyListState,
+        flingBehavior = androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior(lazyListState),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(bottom = 8.dp)
+    ) {
+        // Quick Facts Card
+        item {
+            Card(
+                modifier = Modifier.width(280.dp).fillMaxHeight().clickable { expandedState = ExpandedState.QuickFacts },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("ℹ️ Quick Facts", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("• Built: ${data.quickFacts?.built ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
+                    Text("• Style: ${data.quickFacts?.architectureStyle ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
+                    Text("• Visit Time: ${data.quickFacts?.recommendedVisitTime ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
+
+                    data.quickFacts?.officialWebsite?.let { url ->
+                        Spacer(modifier = Modifier.height(8.dp))
+                        val context = LocalContext.current
+                        OutlinedButton(
+                            onClick = {
+                                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url))
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Text("Official Website", style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                }
+            }
+        }
+
+        // Location Card
+        item {
+            Card(
+                modifier = Modifier.width(280.dp).fillMaxHeight().clickable { expandedState = ExpandedState.Location },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("📍 Location", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(data.location, style = MaterialTheme.typography.bodySmall)
+
+                    data.coordinates?.let { coords ->
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("Lat: ${coords.lat}, Lng: ${coords.lng}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    data.googleMapsLink?.let { link ->
+                        val context = LocalContext.current
+                        Button(
+                            onClick = {
+                                val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse(link))
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                        ) {
+                            Text("Open in Google Maps", style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                }
+            }
+        }
+
+        // Info Cards from JSON
+        items(data.cards.size) { index ->
+            val card = data.cards[index]
+            Card(
+                modifier = Modifier
+                    .width(280.dp)
+                    .fillMaxHeight()
+                    .clickable { expandedState = ExpandedState.Info(card) },
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(card.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    androidx.compose.foundation.rememberScrollState().let { scrollState ->
+                        Text(
+                            text = card.body,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.verticalScroll(scrollState)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    expandedState?.let { state ->
+        androidx.compose.ui.window.Dialog(onDismissRequest = { expandedState = null }) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
+                    when (state) {
+                        is ExpandedState.QuickFacts -> {
+                            Text("ℹ️ Quick Facts", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text("• Built: ${data.quickFacts?.built ?: "N/A"}", style = MaterialTheme.typography.bodyLarge)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("• Style: ${data.quickFacts?.architectureStyle ?: "N/A"}", style = MaterialTheme.typography.bodyLarge)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("• Visit Time: ${data.quickFacts?.recommendedVisitTime ?: "N/A"}", style = MaterialTheme.typography.bodyLarge)
+
+                            data.quickFacts?.officialWebsite?.let { url ->
+                                Spacer(modifier = Modifier.height(16.dp))
+                                val context = LocalContext.current
+                                OutlinedButton(
+                                    onClick = {
+                                        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url))
+                                        context.startActivity(intent)
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text("Official Website")
+                                }
+                            }
+                        }
+                        is ExpandedState.Location -> {
+                            Text("📍 Location", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(data.location, style = MaterialTheme.typography.bodyLarge)
+
+                            data.coordinates?.let { coords ->
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text("Lat: ${coords.lat}, Lng: ${coords.lng}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+
+                            data.googleMapsLink?.let { link ->
+                                Spacer(modifier = Modifier.height(16.dp))
+                                val context = LocalContext.current
+                                Button(
+                                    onClick = {
+                                        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse(link))
+                                        context.startActivity(intent)
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                                ) {
+                                    Text("Open in GMaps")
+                                }
+                            }
+                        }
+                        is ExpandedState.Info -> {
+                            val card = state.card
+                            Text(card.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            androidx.compose.foundation.rememberScrollState().let { scrollState ->
+                                Text(
+                                    text = card.body,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier
+                                        .weight(1f, fill = false)
+                                        .verticalScroll(scrollState)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Button(
+                        onClick = { expandedState = null },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text("Close")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ModelSelectorDropdown(
+    selectedModel: ModelType,
+    onModelSelected: (ModelType) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+            shadowElevation = 8.dp,
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)),
+            modifier = Modifier
+                .size(48.dp)
+                .clickable { expanded = true }
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AutoAwesome,
+                    contentDescription = "Select ML Model",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface.copy(alpha = 0.98f))
+        ) {
+            ModelType.entries.forEach { modelType ->
+                val isSelected = selectedModel == modelType
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = modelType.displayName,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        )
+                    },
+                    modifier = Modifier.background(
+                        if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+                        else Color.Transparent
+                    ),
+                    onClick = {
+                        onModelSelected(modelType)
+                        expanded = false
+                    }
+                )
             }
         }
     }

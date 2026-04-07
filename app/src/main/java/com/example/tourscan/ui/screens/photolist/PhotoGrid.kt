@@ -15,6 +15,7 @@ import com.example.tourscan.data.local.PhotoEntity
 fun PhotoGrid(
     photos: List<PhotoEntity>,
     onClick: (Long) -> Unit,
+    onDelete: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -25,7 +26,7 @@ fun PhotoGrid(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(photos) { photo ->
-            PhotoCard(photo, onClick)
+            PhotoCard(photo, onClick, onDelete)
         }
     }
 }

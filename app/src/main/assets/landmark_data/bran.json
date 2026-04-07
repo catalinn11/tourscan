@@ -1,0 +1,48 @@
+{
+  "landmark_id": "bran",
+  "landmark_name": "Bran Castle",
+  "location": "Bran, Brașov County, Romania",
+  "coordinates": {
+    "lat": 45.5153,
+    "lng": 25.3672
+  },
+  "google_maps_link": "https://maps.app.goo.gl/hyBizjFGadpTYAwB9",
+  "quick_facts": {
+    "built": "1377-1388",
+    "architecture_style": "Gothic",
+    "recommended_visit_time": "1.5-2 hours",
+    "official_website": "http://www.bran-castle.com/"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "history",
+      "title": "🏰 History",
+      "body": "Bran Castle was built in 1388 by the Saxons of Brașov as a fortress to defend the mountain pass into Transylvania. Over the centuries it served as a military, commercial, and customs point. In the early 20th century it became a royal residence, given as a gift by the city of Brașov to Queen Marie of Romania in 1920."
+    },
+    {
+      "id": 2,
+      "type": "legend",
+      "title": "🧛 The Dracula Connection",
+      "body": "Bran Castle is often called 'Dracula\\'s Castle', though the connection to Bram Stoker\\'s Dracula is largely a myth. Stoker never visited Romania, and his descriptions of the fictional Transylvanian castle are only vaguely similar to Bran. However, the historical Vlad the Impaler, who inspired Dracula\\'s name, may have passed through the area."
+    },
+    {
+      "id": 3,
+      "type": "culture",
+      "title": "👑 Queen Marie",
+      "body": "Queen Marie of Romania fell in love with Bran Castle and had it renovated in a cozy, intimate style. She spent many summers here and even requested that her heart be buried at the castle after her death in 1938. The castle reflects her personality — filled with personal items, art, and a fairy-tale atmosphere quite different from its reputation as a 'vampire castle'."
+    },
+    {
+      "id": 4,
+      "type": "architecture",
+      "title": "🏗️ Architecture",
+      "body": "Built on a dramatic 60-meter high rocky cliff, Bran Castle has a distinctive medieval silhouette with white towers and red rooftops. Unlike the grand Peleș, Bran has a more intimate interior of 57 rooms connected by winding staircases and narrow passages, with a central courtyard featuring a well dating back to the original 14th-century fortress."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Visitor Info",
+      "body": "Bran Castle is located 30 km southwest of Brașov, near the village of Bran. It is one of Romania\\'s most visited tourist attractions, drawing over 500,000 visitors annually. The surrounding area offers a traditional craft market and several museums. The castle is open year-round, with special events during Halloween and Christmas seasons."
+    }
+  ]
+}

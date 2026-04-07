@@ -11,18 +11,20 @@ class SavePhotoUseCase(
     private val context: Context,
     private val repository: PhotoRepository
 ) {
-    suspend operator fun invoke(uri: Uri, description: String? = null) {
-        // Upload to Supabase Storage and get public URL
+    suspend operator fun invoke(uri: Uri, description: String? = null, model: String, accuracy: Float): String {
         val remoteUrl = FileUtil.uploadToSupabase(context, uri)
         Log.d("TourScan", "Supabase URL stored: $remoteUrl")
 
-        val photoEntity = PhotoEntity(
-            uri = remoteUrl,  // Supabase public URL
-            description = description,
-            analyzed = true
+        repository.insertPhoto(
+            PhotoEntity(
+                uri = remoteUrl,
+                description = description,
+                model = model,
+                accuracy = accuracy,
+                analyzed = true
+            )
         )
 
-        // Insert in Room
-        repository.insertPhoto(photoEntity)
+        return remoteUrl
     }
 }

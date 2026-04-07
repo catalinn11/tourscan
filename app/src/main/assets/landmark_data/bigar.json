@@ -1,0 +1,48 @@
+{
+  "landmark_id": "bigar",
+  "landmark_name": "Bigar Waterfall",
+  "location": "Anina Mountains, Caraș-Severin County, Romania",
+  "coordinates": {
+    "lat": 44.9672,
+    "lng": 21.9314
+  },
+  "google_maps_link": "https://maps.app.goo.gl/cQX4TyrJUrQ95HLv9",
+  "quick_facts": {
+    "feature_type": "Waterfall / Natural Spring",
+    "altitude": "345 meters",
+    "recommended_visit_time": "1 hour",
+    "latitude_note": "Exactly on the 45th parallel north"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "nature",
+      "title": "💧 The Wonder of Romania",
+      "body": "Bigăr Waterfall is one of the most unique and photogenic waterfalls in the world. Unlike most waterfalls that cascade down rock faces, Bigăr emerges from a lush, moss-covered dome of rock at an altitude of 345 meters and fans out in a spectacular veil of water droplets. It was voted the most unique waterfall in the world by The World Geography website."
+    },
+    {
+      "id": 2,
+      "type": "nature",
+      "title": "🌿 Nature & Formation",
+      "body": "The waterfall is fed by a spring that emerges from inside the Anina Mountains. The water flows over a giant, perfectly rounded mossy rock dome, creating a lace-like curtain of water. The moss (bryophytes) that covers the rock is kept perpetually green and thick by the constant moisture, making the waterfall look like a living, breathing green island in the forest."
+    },
+    {
+      "id": 3,
+      "type": "news",
+      "title": "⚠️ Partial Collapse 2021",
+      "body": "In June 2021, a significant portion of the moss-covered rock dome collapsed, dramatically changing the waterfall\\'s appearance. The collapse was attributed to erosion and the weight of the accumulated moss and water. Authorities and environmentalists are monitoring the site, which continues to attract visitors despite the altered shape. The waterfall is slowly recovering."
+    },
+    {
+      "id": 4,
+      "type": "culture",
+      "title": "📸 Photographer\\'s Paradise",
+      "body": "Bigăr Waterfall is located right at the 45th parallel north — exactly halfway between the Equator and the North Pole — a fact marked on a signpost at the site. The surrounding Cheile Minișului gorge and the lush Semenic-Cheile Carașului National Park create a pristine natural setting. During summer, a rainbow is often visible in the mist of the waterfall in the afternoon sun."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Visitor Info",
+      "body": "Bigăr Waterfall is located near the village of Bozovici in Caraș-Severin County, about 120 km east of Timișoara. It lies within the Semenic-Cheile Carașului National Park and is accessible via a short paved road and a wooden viewing platform. The area is part of a scenic drive through the Miniș Gorge (Cheile Minișului)."
+    }
+  ]
+}

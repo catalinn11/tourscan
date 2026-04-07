@@ -1,0 +1,48 @@
+{
+  "landmark_id": "transfagarasan",
+  "landmark_name": "Transfăgărășan Highway",
+  "location": "Făgăraș Mountains, Romania",
+  "coordinates": {
+    "lat": 45.6019,
+    "lng": 24.6141
+  },
+  "google_maps_link": "https://maps.app.goo.gl/QiVo3TswDd2nWKKB8",
+  "quick_facts": {
+    "built": "1970-1974",
+    "highest_point": "2,042 meters",
+    "length": "90 kilometers",
+    "open_season": "Usually July to October"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "architecture",
+      "title": "🛣️ The Best Driving Road",
+      "body": "The Transfăgărășan (DN7C) is a spectacular 90 km paved mountain road crossing the southern section of the Carpathian Mountains. With its endless hairpin turns, dramatic drop-offs, and sweeping mountain views, it was famously declared 'the best driving road in the world' by the hosts of Top Gear."
+    },
+    {
+      "id": 2,
+      "type": "history",
+      "title": "🏗️ A Strategic Folly",
+      "body": "The road was built between 1970 and 1974 at the orders of Nicolae Ceaușescu. Fearing an invasion following the 1968 Soviet invasion of Czechoslovakia, Ceaușescu wanted a rapid military route across the mountains. The rushed construction was extremely dangerous, costing the lives of dozens of military personnel."
+    },
+    {
+      "id": 3,
+      "type": "nature",
+      "title": "🏞️ Bâlea Lake",
+      "body": "At the highest point of the pass (2,042 meters) lies Bâlea Lake, a stunning glacier lake. The area features chalets where travelers can eat or stay overnight. In the winter, when the road is closed to cars, completely snowed under, a cable car provides access to an Ice Hotel built anew every year."
+    },
+    {
+      "id": 4,
+      "type": "nature",
+      "title": "🐻 Wildlife Encounters",
+      "body": "The Făgăraș Mountains are home to a large population of brown bears. It is very common for drivers on the Transfăgărășan to encounter bears sitting right by the roadside. While they look calm and expect food from tourists, it is highly recommended to stay in the car and not feed them for safety reasons."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Visitor Info",
+      "body": "Due to heavy snowfall, the highest section of the Transfăgărășan is typically closed from late October to late June, making it a summer-only destination for driving. Traffic can be very heavy on weekends in August. Poenari Citadel, the real fortress of Vlad the Impaler, can be visited near the southern end of the road."
+    }
+  ]
+}
