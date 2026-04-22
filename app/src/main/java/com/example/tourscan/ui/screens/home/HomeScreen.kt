@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.filled.ViewInAr
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -123,9 +124,9 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                     Box(
                         modifier = Modifier
                             .padding(top = 20.dp)
-                            .size(80.dp)
+                            .size(75.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f))
                             .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
@@ -656,7 +657,7 @@ fun ModelSelectorDropdown(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Icon(
-                    imageVector = Icons.Default.AutoAwesome,
+                    imageVector = Icons.Default.ViewInAr,
                     contentDescription = "Select ML Model",
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.primary
