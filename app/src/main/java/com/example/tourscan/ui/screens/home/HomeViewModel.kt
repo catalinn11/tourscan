@@ -3,6 +3,8 @@ package com.example.tourscan.ui.screens.home
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
@@ -20,12 +22,14 @@ import kotlinx.coroutines.withContext
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
-import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
-import org.tensorflow.lite.support.image.ops.ResizeOp
+import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.exp
 import kotlin.math.ln
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 class HomeViewModel(
     private val app: Application,
@@ -116,7 +120,8 @@ class HomeViewModel(
 
     // ---------------------------------------------------------------
     //  PIPELINE DE CLASIFICARE
-    //  Input pixels [0,255] → model (preprocessing baked-in) → logits
+    //  Input pixels [0,255] → letterbox resize 224x224
+    //  → model (preprocessing baked-in) → logits
     //  → temperature scaling → softmax → rejectie multi-nivel
     // ---------------------------------------------------------------
 
@@ -125,23 +130,20 @@ class HomeViewModel(
             // 1. Incarca bitmap-ul
             val bitmap = loadBitmapFromUri(uri) ?: return Triple(null, null, 0)
             val selectedModel = _uiState.value.selectedModel
+            val targetSize = selectedModel.inputSize
 
-            // 2. Pregateste imaginea: DOAR resize la 224x224
+            // 2. LETTERBOX RESIZE — identic cu antrenarea!
+            //    Scaleaza proportional pana cand latura mare = 224,
+            //    apoi completeaza cu negru pe margini.
+            //    NU stretch direct — asta distorsioneaza proportiile.
+            val letterboxed = letterboxResize(bitmap, targetSize)
+
+            // 3. Converteste bitmap-ul in ByteBuffer FLOAT32 [0, 255]
             //    NU aplicam NormalizeOp — modelul are preprocesarea
             //    integrata si asteapta pixeli bruti in [0, 255]
-            val imageProcessor = ImageProcessor.Builder()
-                .add(ResizeOp(
-                    selectedModel.inputSize,
-                    selectedModel.inputSize,
-                    ResizeOp.ResizeMethod.BILINEAR
-                ))
-                .build()
+            val inputBuffer = bitmapToFloatBuffer(letterboxed, targetSize)
 
-            val tensorImage = TensorImage(DataType.FLOAT32)
-            tensorImage.load(bitmap)
-            val processedImage = imageProcessor.process(tensorImage)
-
-            // 3. Ruleaza inferenta cu TFLite Interpreter
+            // 4. Ruleaza inferenta cu TFLite Interpreter
             val startTime = System.nanoTime()
 
             val modelFile = FileUtil.loadMappedFile(app, selectedModel.fileName)
@@ -150,28 +152,26 @@ class HomeViewModel(
             val numClasses = labels.size
             val outputArray = Array(1) { FloatArray(numClasses) }
 
-            val inputBuffer = processedImage.buffer
-            inputBuffer.rewind()
             interpreter.run(inputBuffer, outputArray)
             interpreter.close()
 
             val inferenceTimeMs = (System.nanoTime() - startTime) / 1_000_000
             val logits = outputArray[0]
 
-            // 4. Temperature scaling + softmax
+            // 5. Temperature scaling + softmax
             val T = selectedModel.temperature
             val probs = temperatureScaledSoftmax(logits, T)
 
-            // 5. Energy score (pentru logging/debugging)
+            // 6. Energy score (pentru logging/debugging)
             val energyScore = computeEnergyScore(logits, T)
 
-            // 6. Gaseste clasa cu probabilitatea maxima
+            // 7. Gaseste clasa cu probabilitatea maxima
             val bestIdx = probs.indices.maxByOrNull { probs[it] }
                 ?: return Triple(null, null, inferenceTimeMs)
             val bestLabel = labels[bestIdx]
             val bestProb = probs[bestIdx]
 
-            // 7. Gap intre top-1 si top-2
+            // 8. Gap intre top-1 si top-2
             val sortedProbs = probs.sortedDescending()
             val gap = if (sortedProbs.size >= 2) sortedProbs[0] - sortedProbs[1] else 1f
 
@@ -180,7 +180,7 @@ class HomeViewModel(
                 bestProb, gap, energyScore
             ))
 
-            // 8. Decizia de rejectie multi-nivel
+            // 9. Decizia de rejectie multi-nivel
             //    a) Daca modelul zice "altele" → nu e niciun obiectiv
             //    b) Confidenta softmax sub prag → nesigur
             //    c) Gap prea mic intre top-2 → confuzie intre clase
@@ -220,6 +220,61 @@ class HomeViewModel(
     // ---------------------------------------------------------------
     //  Functii auxiliare
     // ---------------------------------------------------------------
+
+    /**
+     * Letterbox resize — identic cu pipeline-ul de antrenare.
+     * Scaleaza imaginea proportional pana cand latura cea mai mare
+     * atinge dimensiunea tinta, apoi completeaza cu negru (padding).
+     * Pastreaza proportiile originale, fara distorsionare.
+     */
+    private fun letterboxResize(src: Bitmap, targetSize: Int): Bitmap {
+        val srcW = src.width
+        val srcH = src.height
+
+        // Calculeaza factorul de scalare (cel mai mic, ca sa incapa)
+        val scale = min(targetSize.toFloat() / srcW, targetSize.toFloat() / srcH)
+        val newW = (srcW * scale).roundToInt()
+        val newH = (srcH * scale).roundToInt()
+
+        // Scaleaza proportional
+        val scaled = Bitmap.createScaledBitmap(src, newW, newH, true)
+
+        // Creeaza canvas negru de targetSize x targetSize
+        val result = Bitmap.createBitmap(targetSize, targetSize, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(result)
+        canvas.drawColor(Color.BLACK)
+
+        // Centreaza imaginea scalata pe canvas
+        val left = (targetSize - newW) / 2f
+        val top = (targetSize - newH) / 2f
+        canvas.drawBitmap(scaled, left, top, null)
+
+        if (scaled != src) scaled.recycle()
+
+        return result
+    }
+
+    /**
+     * Converteste un bitmap ARGB_8888 in ByteBuffer FLOAT32 format RGB [0, 255].
+     * Layout: [1, H, W, 3] — batch=1, height, width, channels(RGB)
+     */
+    private fun bitmapToFloatBuffer(bitmap: Bitmap, size: Int): ByteBuffer {
+        val buffer = ByteBuffer.allocateDirect(1 * size * size * 3 * 4) // 4 bytes per float
+        buffer.order(ByteOrder.nativeOrder())
+
+        val pixels = IntArray(size * size)
+        bitmap.getPixels(pixels, 0, size, 0, 0, size, size)
+
+        for (pixel in pixels) {
+            // ARGB → RGB, as float [0, 255]
+            buffer.putFloat(((pixel shr 16) and 0xFF).toFloat()) // R
+            buffer.putFloat(((pixel shr 8) and 0xFF).toFloat())  // G
+            buffer.putFloat((pixel and 0xFF).toFloat())           // B
+        }
+
+        buffer.rewind()
+        return buffer
+    }
 
     /**
      * Aplica temperature scaling pe logits si returneaza probabilitati softmax.

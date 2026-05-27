@@ -15,8 +15,8 @@ enum class ModelType(
         inputSize = 224,
         temperature = 0.4020f,
         energyThreshold = -1.8987f,
-        softmaxMin = 0.7f,
-        gapMin = 0.2f
+        softmaxMin = 0.50f,
+        gapMin = 0.15f
     ),
     EFFICIENT_NET(
         fileName = "efficientnet_int8.tflite",
@@ -24,7 +24,7 @@ enum class ModelType(
         inputSize = 224,
         temperature = 0.4010f,
         energyThreshold = -2.2416f,
-        softmaxMin = 0.7f,
-        gapMin = 0.2f
+        softmaxMin = 0.50f,
+        gapMin = 0.15f
     )
 }

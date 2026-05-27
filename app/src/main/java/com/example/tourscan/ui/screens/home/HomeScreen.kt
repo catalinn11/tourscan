@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.filled.ViewInAr
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -322,10 +323,13 @@ fun PhotoResultCard(
     val context = LocalContext.current
 
     val resultBorder = Brush.horizontalGradient(
-        colors = listOf(
-            Color(0xFF004494),
-            Color(0xFFD4AF37),
-            Color(0xFFCE1126)
+        colorStops = arrayOf(
+            0.0f to Color(0xFF002B7F),
+            0.28f to Color(0xFF002B7F),
+            0.38f to Color(0xFFFCD116),
+            0.62f to Color(0xFFFCD116),
+            0.72f to Color(0xFFCE1126),
+            1.0f to Color(0xFFCE1126)
         )
     )
 
@@ -386,17 +390,13 @@ fun PhotoResultCard(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     } else if (detectedLabel != null) {
-                        Icon(
-                            imageVector = Icons.Filled.AutoAwesome,
-                            contentDescription = null,
-                            modifier = Modifier.size(22.dp),
-                            tint = Color(0xFFD4AF37)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
 
-                        val accuracyText = if (confidence != null) " - ${(confidence * 100).toInt()}%" else ""
+
+                        val displayName = landmarkData?.landmarkName
+                            ?: detectedLabel.replaceFirstChar { it.uppercase() }
+                        //val accuracyText = if (confidence != null) " - ${(confidence * 100).toInt()}%" else ""
                         Text(
-                            text = detectedLabel.replaceFirstChar { it.uppercase() } + accuracyText,
+                            text = displayName,
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -436,7 +436,7 @@ sealed class ExpandedState {
     data class Info(val card: com.example.tourscan.data.model.LandmarkCard) : ExpandedState()
 }
 
-@androidx.compose.foundation.ExperimentalFoundationApi
+@ExperimentalFoundationApi
 @Composable
 fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
     var expandedState by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<ExpandedState?>(null) }
@@ -462,11 +462,21 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("ℹ️ Quick Facts", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("• Built: ${data.quickFacts?.built ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
-                    Text("• Style: ${data.quickFacts?.architectureStyle ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
-                    Text("• Visit Time: ${data.quickFacts?.recommendedVisitTime ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
 
-                    data.quickFacts?.officialWebsite?.let { url ->
+                    data.quickFacts?.forEach { (key, value) ->
+
+                        if (key != "official_website") {
+
+                            Text(
+                                text = "• ${formatQuickFactKey(key)}: $value",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                    }
+
+                    data.quickFacts?.get("official_website")?.let { url ->
                         Spacer(modifier = Modifier.height(8.dp))
                         val context = LocalContext.current
                         OutlinedButton(
@@ -534,7 +544,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(card.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    androidx.compose.foundation.rememberScrollState().let { scrollState ->
+                    rememberScrollState().let { scrollState ->
                         Text(
                             text = card.body,
                             style = MaterialTheme.typography.bodySmall,
@@ -558,25 +568,55 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                 Column(modifier = Modifier.padding(24.dp)) {
                     when (state) {
                         is ExpandedState.QuickFacts -> {
-                            Text("ℹ️ Quick Facts", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text("• Built: ${data.quickFacts?.built ?: "N/A"}", style = MaterialTheme.typography.bodyLarge)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text("• Style: ${data.quickFacts?.architectureStyle ?: "N/A"}", style = MaterialTheme.typography.bodyLarge)
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text("• Visit Time: ${data.quickFacts?.recommendedVisitTime ?: "N/A"}", style = MaterialTheme.typography.bodyLarge)
 
-                            data.quickFacts?.officialWebsite?.let { url ->
-                                Spacer(modifier = Modifier.height(16.dp))
-                                val context = LocalContext.current
-                                OutlinedButton(
-                                    onClick = {
-                                        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url))
-                                        context.startActivity(intent)
-                                    },
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text("Official Website")
+                            Text(
+                                "ℹ️ Quick Facts",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            val scrollState = rememberScrollState()
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(max = 400.dp)
+                                    .verticalScroll(scrollState)
+                            ) {
+
+                                data.quickFacts?.forEach { (key, value) ->
+
+                                    if (key != "official_website") {
+
+                                        Text(
+                                            text = "• ${formatQuickFactKey(key)}: $value",
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+
+                                        Spacer(modifier = Modifier.height(10.dp))
+                                    }
+                                }
+
+                                data.quickFacts?.get("official_website")?.let { url ->
+
+                                    Spacer(modifier = Modifier.height(12.dp))
+
+                                    val context = LocalContext.current
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            val intent = android.content.Intent(
+                                                android.content.Intent.ACTION_VIEW,
+                                                Uri.parse(url)
+                                            )
+                                            context.startActivity(intent)
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("Official Website")
+                                    }
                                 }
                             }
                         }
@@ -601,7 +641,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                                 ) {
-                                    Text("Open in GMaps")
+                                    Text("Open in Google Maps")
                                 }
                             }
                         }
@@ -609,7 +649,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                             val card = state.card
                             Text(card.title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(16.dp))
-                            androidx.compose.foundation.rememberScrollState().let { scrollState ->
+                            rememberScrollState().let { scrollState ->
                                 Text(
                                     text = card.body,
                                     style = MaterialTheme.typography.bodyMedium,
@@ -656,11 +696,15 @@ fun ModelSelectorDropdown(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
-                Icon(
-                    imageVector = Icons.Default.ViewInAr,
-                    contentDescription = "Select ML Model",
-                    modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                val modelLetter = when (selectedModel) {
+                    ModelType.MOBILENET_V2 -> "M"
+                    ModelType.EFFICIENT_NET -> "E"
+                }
+                Text(
+                    text = modelLetter,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -782,4 +826,13 @@ fun GlassBottomBar(
             }
         }
     }
+}
+
+private fun formatQuickFactKey(key: String): String {
+    return key
+        .replace("_", " ")
+        .split(" ")
+        .joinToString(" ") { word ->
+            word.replaceFirstChar { it.uppercase() }
+        }
 }

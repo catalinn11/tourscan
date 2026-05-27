@@ -133,7 +133,9 @@ fun PhotoDetailsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = photo.description ?: "No description.",
+                text = uiState.landmarkData?.landmarkName
+                    ?: photo.description
+                    ?: "No description.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
