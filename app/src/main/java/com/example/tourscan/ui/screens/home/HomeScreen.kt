@@ -1,7 +1,6 @@
 package com.example.tourscan.ui.screens.home
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
@@ -21,23 +20,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.ImageSearch
 import androidx.compose.material.icons.filled.Photo
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.filled.ViewInAr
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,6 +51,11 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.tourscan.R
+import com.example.tourscan.ui.language.AppLanguage
+import com.example.tourscan.ui.language.LanguageViewModel
+import com.example.tourscan.ui.language.LocalAppLanguage
+import com.example.tourscan.ui.language.StringKey
+import com.example.tourscan.ui.language.Strings
 import org.koin.androidx.compose.getViewModel
 import java.io.File
 
@@ -65,7 +64,13 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
 
     val viewModel: HomeViewModel = getViewModel()
     val context = LocalContext.current
+    val languageViewModel: LanguageViewModel = getViewModel(viewModelStoreOwner = context as androidx.activity.ComponentActivity)
     val uiState by viewModel.uiState.collectAsState()
+    val lang = LocalAppLanguage.current
+
+    androidx.compose.runtime.LaunchedEffect(lang) {
+        viewModel.reloadLandmarkData(lang.code)
+    }
 
     val imageUri = rememberSaveable { mutableStateOf<Uri?>(null) }
     val photoUri = rememberSaveable { mutableStateOf<Uri?>(null) }
@@ -75,7 +80,7 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
     ) { uri ->
         if (uri != null) {
             imageUri.value = uri
-            viewModel.onPhotoCaptured(uri.toString(), isFromCamera = false)
+            viewModel.onPhotoCaptured(uri.toString())
         }
     }
 
@@ -84,7 +89,7 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
     ) { saved ->
         if (saved) {
             imageUri.value = photoUri.value
-            viewModel.onPhotoCaptured(photoUri.value.toString(), isFromCamera = true)
+            viewModel.onPhotoCaptured(photoUri.value.toString())
         }
     }
 
@@ -92,14 +97,14 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) cameraLauncher.launch(photoUri.value)
-        else Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+        else Toast.makeText(context, Strings[lang, StringKey.CAMERA_PERMISSION_DENIED], Toast.LENGTH_SHORT).show()
     }
 
     val galleryPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) galleryLauncher.launch("image/*")
-        else Toast.makeText(context, "Gallery permission denied", Toast.LENGTH_SHORT).show()
+        else Toast.makeText(context, Strings[lang, StringKey.GALLERY_PERMISSION_DENIED], Toast.LENGTH_SHORT).show()
     }
 
     Scaffold(
@@ -122,6 +127,15 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
+                    // Language toggle button
+                    LanguageToggleButton(
+                        currentLanguage = lang,
+                        onToggle = { languageViewModel.toggleLanguage() },
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(top = 20.dp, start = 16.dp)
+                    )
+
                     Box(
                         modifier = Modifier
                             .padding(top = 20.dp)
@@ -179,13 +193,11 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
                                     uri = uri,
                                     isAnalyzing = uiState.isAnalyzing,
                                     detectedLabel = uiState.detectedLabel,
-                                    confidence = uiState.confidence,
                                     landmarkData = uiState.landmarkData
                                 )
                             }
 
                             val isDark = isSystemInDarkTheme()
-                            // iOS-style glass material: translucent surface + border + shadow
                             val glassBackground = if (isDark)
                                 Color(0xFF2C2C2E).copy(alpha = 0.72f)
                             else
@@ -265,6 +277,7 @@ fun HomeScreen(navController: NavController, paddingValues: PaddingValues) {
 
 @Composable
 fun IntroDisplayContent() {
+    val lang = LocalAppLanguage.current
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -278,7 +291,7 @@ fun IntroDisplayContent() {
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = "Discover the places of Romania",
+            text = Strings[lang, StringKey.SUBTITLE],
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
             textAlign = TextAlign.Center
@@ -296,12 +309,12 @@ fun IntroDisplayContent() {
         )
 
         Text(
-            text = "Ready to Scan?",
+            text = Strings[lang, StringKey.READY_TO_SCAN],
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
         Text(
-            text = "Tap the camera below to start.",
+            text = Strings[lang, StringKey.TAP_CAMERA],
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
             textAlign = TextAlign.Center
@@ -317,8 +330,7 @@ fun PhotoResultCard(
     uri: Uri,
     isAnalyzing: Boolean,
     detectedLabel: String?,
-    confidence: Float?,
-    landmarkData: com.example.tourscan.data.model.LandmarkData?
+     landmarkData: com.example.tourscan.data.model.LandmarkData?
 ) {
     val context = LocalContext.current
 
@@ -371,7 +383,7 @@ fun PhotoResultCard(
                     ),
                 shape = RoundedCornerShape(50),
                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-                shadowElevation = 0.dp
+                shadowElevation = 0.dp,
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
@@ -385,7 +397,7 @@ fun PhotoResultCard(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Analyzing...",
+                            text = Strings[LocalAppLanguage.current, StringKey.ANALYZING],
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -410,7 +422,7 @@ fun PhotoResultCard(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Landmark could not be recognized",
+                            text = Strings[LocalAppLanguage.current, StringKey.LANDMARK_NOT_RECOGNIZED],
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error,
                             fontWeight = FontWeight.Medium
@@ -439,6 +451,7 @@ sealed class ExpandedState {
 @ExperimentalFoundationApi
 @Composable
 fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
+    val lang = LocalAppLanguage.current
     var expandedState by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf<ExpandedState?>(null) }
     val lazyListState = androidx.compose.foundation.lazy.rememberLazyListState()
 
@@ -460,7 +473,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("ℹ️ Quick Facts", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text(Strings[lang, StringKey.QUICK_FACTS], style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
 
                     data.quickFacts?.forEach { (key, value) ->
@@ -468,7 +481,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                         if (key != "official_website") {
 
                             Text(
-                                text = "• ${formatQuickFactKey(key)}: $value",
+                                text = "• ${formatQuickFactKey(key, lang)}: $value",
                                 style = MaterialTheme.typography.bodySmall
                             )
 
@@ -487,7 +500,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                             modifier = Modifier.fillMaxWidth(),
                             contentPadding = PaddingValues(0.dp)
                         ) {
-                            Text("Official Website", style = MaterialTheme.typography.labelSmall)
+                            Text(Strings[lang, StringKey.OFFICIAL_WEBSITE], style = MaterialTheme.typography.labelSmall)
                         }
                     }
                 }
@@ -502,7 +515,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("📍 Location", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text(Strings[lang, StringKey.LOCATION], style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(data.location, style = MaterialTheme.typography.bodySmall)
 
@@ -523,7 +536,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                         ) {
-                            Text("Open in Google Maps", style = MaterialTheme.typography.labelSmall)
+                            Text(Strings[lang, StringKey.OPEN_GOOGLE_MAPS], style = MaterialTheme.typography.labelSmall)
                         }
                     }
                 }
@@ -570,7 +583,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                         is ExpandedState.QuickFacts -> {
 
                             Text(
-                                "ℹ️ Quick Facts",
+                                Strings[lang, StringKey.QUICK_FACTS],
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
@@ -591,7 +604,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                                     if (key != "official_website") {
 
                                         Text(
-                                            text = "• ${formatQuickFactKey(key)}: $value",
+                                            text = "• ${formatQuickFactKey(key, lang)}: $value",
                                             style = MaterialTheme.typography.bodyLarge
                                         )
 
@@ -615,13 +628,13 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                                         },
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Text("Official Website")
+                                        Text(Strings[lang, StringKey.OFFICIAL_WEBSITE])
                                     }
                                 }
                             }
                         }
                         is ExpandedState.Location -> {
-                            Text("📍 Location", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Text(Strings[lang, StringKey.LOCATION], style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(data.location, style = MaterialTheme.typography.bodyLarge)
 
@@ -641,7 +654,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                                 ) {
-                                    Text("Open in Google Maps")
+                                     Text(Strings[lang, StringKey.OPEN_GOOGLE_MAPS])
                                 }
                             }
                         }
@@ -666,7 +679,7 @@ fun LandmarkInfoCarousel(data: com.example.tourscan.data.model.LandmarkData) {
                         onClick = { expandedState = null },
                         modifier = Modifier.align(Alignment.End)
                     ) {
-                        Text("Close")
+                        Text(Strings[lang, StringKey.CLOSE])
                     }
                 }
             }
@@ -828,11 +841,57 @@ fun GlassBottomBar(
     }
 }
 
-private fun formatQuickFactKey(key: String): String {
+private fun formatQuickFactKey(key: String, lang: AppLanguage): String {
+    if (lang == AppLanguage.RO) {
+        val roTranslations = mapOf(
+            "built" to "Construit",
+            "architecture_style" to "Stil Arhitectural",
+            "recommended_visit_time" to "Timp Recomandat",
+            "official_website" to "Site Oficial",
+            "feature_type" to "Tip",
+            "altitude" to "Altitudine",
+            "latitude_note" to "Notă Latitudine",
+            "area" to "Suprafață",
+            "best_season" to "Cel Mai Bun Sezon",
+            "highest_point" to "Cel Mai Înalt Punct",
+            "length" to "Lungime",
+            "open_season" to "Sezon De Vizitare",
+            "depth" to "Adâncime"
+        )
+        roTranslations[key]?.let { return it }
+    }
+    
     return key
         .replace("_", " ")
         .split(" ")
         .joinToString(" ") { word ->
             word.replaceFirstChar { it.uppercase() }
         }
+}
+
+@Composable
+fun LanguageToggleButton(
+    currentLanguage: AppLanguage,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .shadow(8.dp, CircleShape)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f))
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f),
+                CircleShape
+            )
+            .clickable(onClick = onToggle)
+            .size(48.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = currentLanguage.flag,
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
 }

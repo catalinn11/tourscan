@@ -39,6 +39,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.tourscan.ui.language.LocalAppLanguage
+import com.example.tourscan.ui.language.StringKey
+import com.example.tourscan.ui.language.Strings
 import com.example.tourscan.utils.FileUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -57,6 +60,11 @@ fun PhotoDetailsScreen(
     val photo = uiState.photo
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val lang = LocalAppLanguage.current
+
+    androidx.compose.runtime.LaunchedEffect(lang) {
+        viewModel.reloadLandmarkData(lang.code)
+    }
 
     if (photo == null) {
         LoadingDetails()
@@ -78,7 +86,7 @@ fun PhotoDetailsScreen(
                     IconButton(onClick = {
                         scope.launch {
                             val saved = FileUtil.saveImageToGallery(context, photo.uri)
-                            val message = if (saved) "Photo saved to gallery" else "Failed to save photo"
+                            val message = if (saved) Strings[lang, StringKey.PHOTO_SAVED] else Strings[lang, StringKey.PHOTO_SAVE_FAILED]
                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                         }
                     }) {
@@ -135,7 +143,7 @@ fun PhotoDetailsScreen(
             Text(
                 text = uiState.landmarkData?.landmarkName
                     ?: photo.description
-                    ?: "No description.",
+                    ?: Strings[lang, StringKey.NO_DESCRIPTION],
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -143,7 +151,7 @@ fun PhotoDetailsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Captured: ${formatTimestamp(photo.createdAt)}",
+                text = "${Strings[lang, StringKey.CAPTURED]}: ${formatTimestamp(photo.createdAt)}",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
@@ -156,13 +164,13 @@ fun PhotoDetailsScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
                 ) {
                     Column(Modifier.padding(16.dp)) {
-                        Text(text = "AI Inference", style = MaterialTheme.typography.titleMedium, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                        Text(text = Strings[lang, StringKey.AI_INFERENCE], style = MaterialTheme.typography.titleMedium, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Detection: ${photo.description}", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = "${Strings[lang, StringKey.DETECTION]}: ${photo.description}", style = MaterialTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(text = "Model: ${photo.model}", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = "${Strings[lang, StringKey.MODEL]}: ${photo.model}", style = MaterialTheme.typography.bodyMedium)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(text = "Accuracy: ${"%.1f".format(photo.accuracy * 100f)}%", style = MaterialTheme.typography.bodyMedium)
+                        Text(text = "${Strings[lang, StringKey.ACCURACY]}: ${"%.1f".format(photo.accuracy * 100f)}%", style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }
@@ -188,7 +196,7 @@ fun LoadingDetails() {
         ) {
             CircularProgressIndicator()
             Spacer(Modifier.height(12.dp))
-            Text("Loading photo…")
+            Text(Strings[LocalAppLanguage.current, StringKey.LOADING_PHOTO])
         }
     }
 }

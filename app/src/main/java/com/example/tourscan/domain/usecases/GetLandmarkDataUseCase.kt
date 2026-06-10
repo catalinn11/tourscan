@@ -10,11 +10,11 @@ class GetLandmarkDataUseCase(
     private val context: Context,
     private val gson: Gson
 ) {
-    suspend operator fun invoke(label: String): LandmarkData? = withContext(Dispatchers.IO) {
+    suspend operator fun invoke(label: String, languageCode: String = "ro"): LandmarkData? = withContext(Dispatchers.IO) {
         try {
-            // Replace spaces with underscores and lowercase, just in case
             val fileName = label.replace(" ", "_").lowercase() + ".json"
-            val inputStream = context.assets.open("landmark_data/$fileName")
+            val folder = if (languageCode == "ro") "landmark_data_ro" else "landmark_data"
+            val inputStream = context.assets.open("$folder/$fileName")
             val jsonString = inputStream.bufferedReader().use { it.readText() }
             gson.fromJson(jsonString, LandmarkData::class.java)
         } catch (e: Exception) {

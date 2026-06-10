@@ -34,7 +34,7 @@ class PhotoListViewModel(
                     photos = list
                 )
 
-                // Preload all images with Coil
+                // Preload
                 if (list.isNotEmpty()) {
                     preloadImages(list.map { it.uri })
                 } else {
@@ -83,10 +83,8 @@ class PhotoListViewModel(
 
     fun deleteAllPhotos() {
         viewModelScope.launch {
-            // 1. Get all photo URLs from existing flow
             val urls = repo.getAllPhotos().first().map { it.uri }
 
-            // 2. Delete files from Supabase Storage
             withContext(Dispatchers.IO) {
                 try {
                     val bucket = SupabaseClient.client.storage.from(SupabaseClient.BUCKET_NAME)

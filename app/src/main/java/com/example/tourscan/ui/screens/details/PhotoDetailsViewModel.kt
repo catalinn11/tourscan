@@ -28,15 +28,26 @@ class PhotoDetailsViewModel(
     private val _uiState = MutableStateFlow(PhotoDetailsUiState())
     val uiState: StateFlow<PhotoDetailsUiState> = _uiState
 
+    var currentLanguageCode: String = "ro"
+
     init {
         viewModelScope.launch {
             val photoEntity = repo.getPhotoByCreatedAt(createdAt)
             _uiState.update { it.copy(photo = photoEntity) }
 
             if (photoEntity?.description != null) {
-                val data = getLandmarkDataUseCase(photoEntity.description)
+                val data = getLandmarkDataUseCase(photoEntity.description, currentLanguageCode)
                 _uiState.update { it.copy(landmarkData = data) }
             }
+        }
+    }
+
+    fun reloadLandmarkData(languageCode: String) {
+        currentLanguageCode = languageCode
+        val description = _uiState.value.photo?.description ?: return
+        viewModelScope.launch {
+            val data = getLandmarkDataUseCase(description, languageCode)
+            _uiState.update { it.copy(landmarkData = data) }
         }
     }
 
@@ -47,3 +58,4 @@ class PhotoDetailsViewModel(
         }
     }
 }
+

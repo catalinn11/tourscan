@@ -19,6 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.tourscan.R
+import com.example.tourscan.ui.language.LocalAppLanguage
+import com.example.tourscan.ui.language.StringKey
+import com.example.tourscan.ui.language.Strings
 
 @Composable
 fun EmptyState(modifier: Modifier = Modifier) {
@@ -38,7 +41,7 @@ fun EmptyState(modifier: Modifier = Modifier) {
         )
 
         Spacer(Modifier.height(16.dp))
-        Text("No photos yet", style = MaterialTheme.typography.titleMedium)
-        Text("Take or import a photo to get started.")
+        Text(Strings[LocalAppLanguage.current, StringKey.NO_PHOTOS_YET], style = MaterialTheme.typography.titleMedium)
+        Text(Strings[LocalAppLanguage.current, StringKey.TAKE_OR_IMPORT])
     }
 }
