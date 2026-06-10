@@ -376,6 +376,7 @@ fun PhotoResultCard(
         AnimatedVisibility(visible = true) {
             Surface(
                 modifier = Modifier
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f), RoundedCornerShape(50))
                     .then(
                         if (!isAnalyzing && detectedLabel != null)
                             Modifier.border(1.5.dp, resultBorder, RoundedCornerShape(50))
