@@ -1,0 +1,48 @@
+{
+  "landmark_id": "palatul_parlamentului",
+  "landmark_name": "Palatul Parlamentului",
+  "location": "București, România",
+  "coordinates": {
+    "lat": 44.4275,
+    "lng": 26.0877
+  },
+  "google_maps_link": "https://maps.app.goo.gl/Yx8pNkfVQgQz6Nwx6",
+  "quick_facts": {
+    "built": "1984-1997",
+    "architecture_style": "Neoclasic socialist",
+    "recommended_visit_time": "1,5-2 ore",
+    "official_website": "https://cic.cdep.ro/"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "history",
+      "title": "🏛️ Istorie",
+      "body": "Palatul Parlamentului a fost comandat de Nicolae Ceaușescu în 1984, în timpul erei comuniste, ca sediu al puterii politice și administrative. Construcția sa a necesitat demolarea unei mari părți din centrul istoric al Bucureștiului, strămutând peste 40.000 de persoane. Lucrările au continuat și după revoluția din 1989, iar clădirea a fost finalizată în mare parte până în 1997. Astăzi găzduiește Parlamentul României."
+    },
+    {
+      "id": 2,
+      "type": "architecture",
+      "title": "🏗️ Arhitectură",
+      "body": "Proiectat de arhitecta Anca Petrescu, Palatul este cea mai grea clădire din lume și a doua cea mai mare clădire administrativă după Pentagon. Acoperă 365.000 de metri pătrați pe 12 etaje deasupra solului și 8 niveluri subterane. Interiorul dispune de 1.100 de camere cu săli masive de marmură, candelabre de cristal cântărind până la 5 tone și sculpturi ornamentale în lemn — toate realizate exclusiv din materiale românești."
+    },
+    {
+      "id": 3,
+      "type": "culture",
+      "title": "⚖️ Un simbol controversat",
+      "body": "Palatul rămâne unul dintre cele mai dezbătute monumente ale României. Pentru mulți români, reprezintă excesele regimului Ceaușescu — cartiere întregi au fost rase pentru construcția sa, inclusiv biserici și mănăstiri istorice. Alții îl văd ca o realizare impresionantă de inginerie și meșteșug. Astăzi servește un rol practic ca sediu al Parlamentului României, centru de conferințe și Muzeul Național de Artă Contemporană."
+    },
+    {
+      "id": 4,
+      "type": "records",
+      "title": "🏆 Recorduri mondiale",
+      "body": "Clădirea deține mai multe recorduri mondiale Guinness: este cea mai grea clădire din lume, cu aproximativ 4,1 milioane de tone, cea mai scumpă clădire administrativă construită vreodată, și cea mai mare clădire civilă ca volum. Construcția a folosit aproximativ 1 milion de metri cubi de marmură, 3.500 de tone de cristal pentru 480 de candelabre și 700.000 de tone de oțel și bronz."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Informații pentru vizitatori",
+      "body": "Palatul Parlamentului este situat pe Dealul Arsenalului în centrul Bucureștiului, la capătul vestic al Bulevardului Unirii. Tururile ghidate sunt disponibile zilnic și trebuie rezervate în avans; vizitatorii au nevoie de un act de identitate valid. Turul acoperă sălile principale, balcoanele și terasele cu vederi panoramice asupra Bucureștiului. Muzeul Național de Artă Contemporană, situat într-o aripă a clădirii, este de asemenea deschis vizitatorilor."
+    }
+  ]
+}

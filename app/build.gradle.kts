@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp.plugin)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -12,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.tourscan"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -48,9 +49,13 @@ dependencies {
 
     // Room
     implementation (libs.androidx.room.runtime)
+
     ksp(libs.androidx.room.compiler)
     implementation (libs.androidx.room.ktx)
     implementation(libs.zetetic.sqlcipher.android)
+
+    // MLKit
+    implementation(libs.common)
 
     // Retrofit + OkHttp
     implementation (libs.gson)
@@ -68,6 +73,12 @@ dependencies {
     // Koin
     implementation("io.insert-koin:koin-android:3.4.0")
     implementation("io.insert-koin:koin-androidx-compose:3.4.0")
+
+    // Supabase
+    implementation(platform(libs.supabase.bom))
+    implementation(libs.supabase.storage.kt)
+    implementation(libs.ktor.client.android)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.coil)

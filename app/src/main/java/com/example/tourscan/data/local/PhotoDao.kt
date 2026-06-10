@@ -20,6 +20,9 @@ interface PhotoDao {
     suspend fun getByCreatedAt(createdAt: Long): PhotoEntity?
 
 
+    @Query("DELETE FROM photos WHERE createdAt = :createdAt")
+    suspend fun deleteByCreatedAt(createdAt: Long)
+
     @Query("DELETE FROM photos")
     suspend fun deleteAll()
 

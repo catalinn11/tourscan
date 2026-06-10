@@ -10,6 +10,8 @@ data class PhotoEntity(
     val uri: String,
     val analyzed: Boolean = false,
     val description: String? = null,
+    val model: String? = null,
+    val accuracy: Float? = null,
     val createdAt: Long = System.currentTimeMillis()
 )
 

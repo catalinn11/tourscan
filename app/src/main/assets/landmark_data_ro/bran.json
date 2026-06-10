@@ -1,0 +1,48 @@
+{
+  "landmark_id": "bran",
+  "landmark_name": "Castelul Bran",
+  "location": "Bran, Județul Brașov, România",
+  "coordinates": {
+    "lat": 45.5153,
+    "lng": 25.3672
+  },
+  "google_maps_link": "https://maps.app.goo.gl/hyBizjFGadpTYAwB9",
+  "quick_facts": {
+    "built": "1377-1388",
+    "architecture_style": "Gotic",
+    "recommended_visit_time": "1,5-2 ore",
+    "official_website": "http://www.bran-castle.com/"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "history",
+      "title": "🏰 Istorie",
+      "body": "Castelul Bran a fost construit în 1388 de sașii din Brașov ca fortăreață pentru apărarea trecătorii montane spre Transilvania. De-a lungul secolelor, a servit ca punct militar, comercial și vamal. La începutul secolului XX, a devenit reședință regală, fiind dăruit de orașul Brașov Reginei Maria a României în 1920."
+    },
+    {
+      "id": 2,
+      "type": "legend",
+      "title": "🧛 Legătura cu Dracula",
+      "body": "Castelul Bran este adesea numit „Castelul lui Dracula\", deși legătura cu Dracula al lui Bram Stoker este în mare parte un mit. Stoker nu a vizitat niciodată România, iar descrierile castelului fictiv din Transilvania seamănă doar vag cu Bran. Totuși, Vlad Țepeș, care a inspirat numele Dracula, este posibil să fi trecut prin zonă."
+    },
+    {
+      "id": 3,
+      "type": "culture",
+      "title": "👑 Regina Maria",
+      "body": "Regina Maria a României s-a îndrăgostit de Castelul Bran și l-a renovat într-un stil intim și confortabil. A petrecut multe veri aici și a cerut chiar ca inima ei să fie îngropată la castel după moartea sa, în 1938. Castelul reflectă personalitatea ei — plin de obiecte personale, artă și o atmosferă de basm, destul de diferită de reputația sa de „castel al vampirilor\"."
+    },
+    {
+      "id": 4,
+      "type": "architecture",
+      "title": "🏗️ Arhitectură",
+      "body": "Construit pe o stâncă dramatică de 60 de metri înălțime, Castelul Bran are o siluetă medievală distinctivă, cu turnuri albe și acoperișuri roșii. Spre deosebire de grandiosul Peleș, Bran are un interior mai intim, cu 57 de camere conectate prin scări întortocheate și pasaje înguste, cu o curte interioară dotată cu o fântână datând din secolul al XIV-lea."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Informații pentru vizitatori",
+      "body": "Castelul Bran este situat la 30 km sud-vest de Brașov, lângă satul Bran. Este una dintre cele mai vizitate atracții turistice din România, atrăgând peste 500.000 de vizitatori anual. Zona înconjurătoare oferă un târg tradițional de meșteșuguri și câteva muzee. Castelul este deschis tot anul, cu evenimente speciale în perioada Halloween-ului și a Crăciunului."
+    }
+  ]
+}

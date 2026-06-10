@@ -1,0 +1,48 @@
+{
+  "landmark_id": "peles",
+  "landmark_name": "Castelul Peleș",
+  "location": "Sinaia, Județul Prahova, România",
+  "coordinates": {
+    "lat": 45.3600,
+    "lng": 25.5424
+  },
+  "google_maps_link": "https://maps.app.goo.gl/K3Y8TaijvtGz8st48",
+  "quick_facts": {
+    "built": "1873-1914",
+    "architecture_style": "Neo-Renascentist",
+    "recommended_visit_time": "2-3 ore",
+    "official_website": "https://peles.ro/en/"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "history",
+      "title": "🏰 Istorie",
+      "body": "Castelul Peleș a fost construit între 1873 și 1914 ca reședință de vară pentru Regele Carol I al României. Proiectat de arhitecții Johannes Schultz și Karel Liman, a fost unul dintre cele mai moderne castele din Europa la momentul finalizării, dispunând de încălzire centrală, lift și electricitate de la propria centrală electrică."
+    },
+    {
+      "id": 2,
+      "type": "architecture",
+      "title": "🎨 Arhitectură",
+      "body": "O capodoperă a arhitecturii neo-renascentiste îmbinată cu stiluri germane, castelul dispune de 160 de camere, fiecare decorată într-un stil internațional distinct — florentin, maur, turcesc, rococo francez și Ludovic al XVI-lea. Exteriorul este împodobit cu sculpturi în lemn, stucaturi și turele ornamentale cu vedere spre Munții Bucegi."
+    },
+    {
+      "id": 3,
+      "type": "trivia",
+      "title": "💡 Știați că?",
+      "body": "Castelul Peleș a fost primul castel din Europa alimentat complet cu electricitate — cu mult înainte ca majoritatea orașelor europene să aibă iluminat electric. Electricitatea era generată de o centrală locală pe râul Peleș. De asemenea, avea unul dintre primele cinematografe interioare din România, folosit pentru proiecții regale."
+    },
+    {
+      "id": 4,
+      "type": "culture",
+      "title": "🎭 Moștenirea regală",
+      "body": "Castelul a servit ca reședință de vară pentru familia regală română timp de peste 70 de ani. Găzduiește o colecție impresionantă de artă cu peste 2.000 de picturi, sculpturi și tapiserii. După confiscarea de către regimul comunist în 1949, a fost deschis publicului ca muzeu și atrage astăzi peste 500.000 de vizitatori pe an."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Informații pentru vizitatori",
+      "body": "Castelul Peleș este situat în Sinaia, în Valea Prahovei, la aproximativ 120 km nord de București. Se află la o altitudine de 800 m, înconjurat de dealuri carpatice împădurite. Castelul Pelișor, o reședință regală mai mică în stil Art Nouveau, se află la doar 200 de metri distanță și este de asemenea deschis vizitatorilor."
+    }
+  ]
+}

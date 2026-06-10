@@ -1,0 +1,48 @@
+{
+  "landmark_id": "salina_turda",
+  "landmark_name": "Salina Turda",
+  "location": "Turda, Cluj County, Romania",
+  "coordinates": {
+    "lat": 46.5880,
+    "lng": 23.7876
+  },
+  "google_maps_link": "https://maps.app.goo.gl/tRaR7aKH8MTavKbk8",
+  "quick_facts": {
+    "feature_type": "Underground Salt Mine",
+    "depth": "120 meters",
+    "recommended_visit_time": "2-3 hours",
+    "official_website": "https://salinaturda.eu"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "nature",
+      "title": "⛏️ An Underground Wonder",
+      "body": "Salina Turda is one of the oldest and most spectacular salt mines in the world. First mentioned in 1075, it was operational until 1932. Instead of becoming a forgotten cave, it was transformed in 2010 into a futuristic underground theme park that attracts hundreds of thousands of tourists annually."
+    },
+    {
+      "id": 2,
+      "type": "architecture",
+      "title": "🎡 Sci-Fi Amusement Park",
+      "body": "The interior of the mine looks like a secret base from a science fiction movie. Descending 120 meters below ground, visitors find a Ferris wheel, mini-golf courses, bowling alleys, ping-pong tables, and a small amphitheater, all illuminated by dramatic, futuristic neon lighting."
+    },
+    {
+      "id": 3,
+      "type": "nature",
+      "title": "🚣 Terezia Mine Lake",
+      "body": "The deepest part of the complex is the Terezia Mine, reaching a depth of 120 meters. At its bottom lies a subterranean lake with an island of salt salt. Visitors can rent rowboats and paddle around the eerily lit lake, surrounded by sheer walls showing centuries of manual salt extraction."
+    },
+    {
+      "id": 4,
+      "type": "trivia",
+      "title": "🌬️ Healing Atmosphere",
+      "body": "The air inside Salina Turda is incredibly pure, maintaining a constant temperature of 10-12°C (50-54°F) and 80% humidity year-round. It is entirely free of allergens and bacteria, making the mine a popular destination for halotherapy—a treatment beneficial for people with respiratory issues like asthma."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Visitor Info",
+      "body": "Salina Turda is located near the city of Cluj-Napoca. Access to the main chambers is via an elevator or hundreds of wooden steps. Bring warm clothing, as it remains chilly even in the middle of summer. The parking area and the modern entrance pavilions are well-organized for visitors."
+    }
+  ]
+}

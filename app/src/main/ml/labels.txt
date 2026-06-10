@@ -1,5 +1,9 @@
-biserică
-cascadă
-castel
-deltă
-munte
+altele
+bigar
+bran
+corvinilor
+delta_dunarii
+palatul_parlamentului
+peles
+salina_turda
+transfagarasan

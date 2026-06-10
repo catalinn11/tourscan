@@ -29,7 +29,6 @@ fun NavGraph(navController: NavHostController, paddingValues: PaddingValues) {
             arguments = listOf(navArgument("createdAt") { type = NavType.LongType })
         ) {
 
-            // Koin automatically reads createdAt from SavedStateHandle
             val viewModel: PhotoDetailsViewModel = getViewModel()
 
             PhotoDetailsScreen(viewModel, navController)

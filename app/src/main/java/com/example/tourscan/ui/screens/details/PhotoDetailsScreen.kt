@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.SaveAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,6 +39,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.tourscan.ui.language.LocalAppLanguage
+import com.example.tourscan.ui.language.StringKey
+import com.example.tourscan.ui.language.Strings
 import com.example.tourscan.utils.FileUtil
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
@@ -52,9 +56,15 @@ fun PhotoDetailsScreen(
     navController: NavController
 ) {
 
-    val photo = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsState().value
+    val photo = uiState.photo
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val lang = LocalAppLanguage.current
+
+    androidx.compose.runtime.LaunchedEffect(lang) {
+        viewModel.reloadLandmarkData(lang.code)
+    }
 
     if (photo == null) {
         LoadingDetails()
@@ -76,7 +86,7 @@ fun PhotoDetailsScreen(
                     IconButton(onClick = {
                         scope.launch {
                             val saved = FileUtil.saveImageToGallery(context, photo.uri)
-                            val message = if (saved) "Photo saved to gallery" else "Failed to save photo"
+                            val message = if (saved) Strings[lang, StringKey.PHOTO_SAVED] else Strings[lang, StringKey.PHOTO_SAVE_FAILED]
                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                         }
                     }) {
@@ -84,6 +94,15 @@ fun PhotoDetailsScreen(
                             imageVector = Icons.Outlined.SaveAlt,
                             contentDescription = "Save to Gallery",
                             tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = {
+                        viewModel.deletePhoto { navController.popBackStack() }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Delete Photo",
+                            tint = MaterialTheme.colorScheme.error
                         )
                     }
                 },
@@ -122,7 +141,9 @@ fun PhotoDetailsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = photo.description ?: "No description.",
+                text = uiState.landmarkData?.landmarkName
+                    ?: photo.description
+                    ?: Strings[lang, StringKey.NO_DESCRIPTION],
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -130,10 +151,36 @@ fun PhotoDetailsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Captured: ${formatTimestamp(photo.createdAt)}",
+                text = "${Strings[lang, StringKey.CAPTURED]}: ${formatTimestamp(photo.createdAt)}",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
+
+            if (photo.model != null && photo.accuracy != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(0.95f),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
+                ) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(text = Strings[lang, StringKey.AI_INFERENCE], style = MaterialTheme.typography.titleMedium, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "${Strings[lang, StringKey.DETECTION]}: ${photo.description}", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "${Strings[lang, StringKey.MODEL]}: ${photo.model}", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "${Strings[lang, StringKey.ACCURACY]}: ${"%.1f".format(photo.accuracy * 100f)}%", style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+
+            uiState.landmarkData?.let { data ->
+                Spacer(modifier = Modifier.height(24.dp))
+                @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+                com.example.tourscan.ui.screens.home.LandmarkInfoCarousel(data = data)
+                Spacer(modifier = Modifier.height(32.dp))
+            }
         }
     }
 }
@@ -149,7 +196,7 @@ fun LoadingDetails() {
         ) {
             CircularProgressIndicator()
             Spacer(Modifier.height(12.dp))
-            Text("Loading photo…")
+            Text(Strings[LocalAppLanguage.current, StringKey.LOADING_PHOTO])
         }
     }
 }

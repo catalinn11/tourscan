@@ -1,0 +1,48 @@
+{
+  "landmark_id": "delta_dunarii",
+  "landmark_name": "Delta Dunării",
+  "location": "Județul Tulcea, România",
+  "coordinates": {
+    "lat": 44.9765,
+    "lng": 29.3512
+  },
+  "google_maps_link": "https://maps.app.goo.gl/8fSpxvS5Ry3JXyP79",
+  "quick_facts": {
+    "feature_type": "Sit UNESCO Patrimoniu Mondial",
+    "area": "4.152 km²",
+    "recommended_visit_time": "2-3 zile",
+    "best_season": "Mai - Septembrie"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "nature",
+      "title": "🦆 Paradisul ornitologilor",
+      "body": "Delta Dunării este una dintre cele mai mari și mai bine conservate delte din Europa, adăpostind peste 300 de specii de păsări. Milioane de păsări din Europa, Asia și Africa vin aici pentru a cuibări sau a se odihni în timpul migrației. Este deosebit de faimoasă pentru cea mai mare populaţie de pelicani din Europa, în special Pelicanul Comun."
+    },
+    {
+      "id": 2,
+      "type": "nature",
+      "title": "🌿 Ecosistem unic",
+      "body": "Delta este un labirint de lacuri, stufărișuri, canale și insule. Găzduiește cea mai mare mlaștină continuă din Europa și include Pădurea Letea, cea mai nordică pădure subtropicală din Europa, cunoscută pentru caii sălbatici, dunele de nisip și lianele împletite cu stejari seculari."
+    },
+    {
+      "id": 3,
+      "type": "culture",
+      "title": "🛶 Sate tradiționale",
+      "body": "Delta este slab populată de comunități tradiționale de pescari. Lipovenii, descendenți ai Vechilor Credincioși ruși care au fugit de persecuții în secolul al XVIII-lea, și-au păstrat modul de viață tradițional, casele din lemn colorate cu acoperișuri de stuf și bucătăria distinctă, bazată în mare parte pe pește proaspăt."
+    },
+    {
+      "id": 4,
+      "type": "geography",
+      "title": "🌊 Cele trei brațe",
+      "body": "Înainte de a se vărsa în Marea Neagră, puternica Dunăre se împarte în trei brațe principale: Chilia (cel mai nordic, la granița cu Ucraina), Sulina (brațul din mijloc, dragat intens pentru navigație) și Sfântu Gheorghe (cel mai sudic și cel mai sinuos braț)."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Informații pentru vizitatori",
+      "body": "Cel mai bun mod de a explora Delta este cu barca, pornind din orașul Tulcea sau din sate precum Murighiol și Mahmudia. Tururile cu bărci locale mici oferă cea mai bună șansă de a naviga canalele înguste și de a observa fauna sălbatică fără a deranja ecosistemul. Aduceți repelent de țânțari din abundență!"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "landmark_id": "bigar",
+  "landmark_name": "Cascada Bigăr",
+  "location": "Munții Aninei, Județul Caraș-Severin, România",
+  "coordinates": {
+    "lat": 44.9672,
+    "lng": 21.9314
+  },
+  "google_maps_link": "https://maps.app.goo.gl/cQX4TyrJUrQ95HLv9",
+  "quick_facts": {
+    "feature_type": "Cascadă / Izvor natural",
+    "altitude": "345 metri",
+    "recommended_visit_time": "1 oră",
+    "latitude_note": "Exact pe paralela 45 Nord"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "nature",
+      "title": "💧 Minunea României",
+      "body": "Cascada Bigăr este una dintre cele mai unice și fotogenice cascade din lume. Spre deosebire de majoritatea cascadelor care curg pe fețe de stâncă, Bigăr izvorăște dintr-un dom de piatră acoperit cu mușchi la o altitudine de 345 de metri și se deschide într-un voal spectaculos de picături de apă. A fost votată cea mai unică cascadă din lume de site-ul The World Geography."
+    },
+    {
+      "id": 2,
+      "type": "nature",
+      "title": "🌿 Natură și formare",
+      "body": "Cascada este alimentată de un izvor care iese din interiorul Munților Aninei. Apa curge peste un dom de stâncă gigantic, perfect rotunjit și acoperit cu mușchi, creând o perdea de apă asemănătoare dantelei. Mușchiul (briofitele) care acoperă stânca este menținut permanent verde și gros de umiditatea constantă, făcând cascada să arate ca o insulă verde vie în mijlocul pădurii."
+    },
+    {
+      "id": 3,
+      "type": "news",
+      "title": "⚠️ Prăbușire parțială 2021",
+      "body": "În iunie 2021, o porțiune semnificativă a domului de piatră acoperit cu mușchi s-a prăbușit, schimbând dramatic aspectul cascadei. Prăbușirea a fost atribuită eroziunii și greutății mușchiului și apei acumulate. Autoritățile și ecologiștii monitorizează zona, care continuă să atragă vizitatori în ciuda formei modificate. Cascada se recuperează lent."
+    },
+    {
+      "id": 4,
+      "type": "culture",
+      "title": "📸 Paradisul fotografilor",
+      "body": "Cascada Bigăr este situată exact pe paralela 45 Nord — la jumătatea distanței dintre Ecuator și Polul Nord — un fapt marcat pe un indicator la fața locului. Cheile Minișului din împrejurimi și Parcul Național Semenic-Cheile Carașului creează un cadru natural virgin. Vara, un curcubeu este adesea vizibil în ceața cascadei în lumina soarelui de după-amiază."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Informații pentru vizitatori",
+      "body": "Cascada Bigăr este situată lângă satul Bozovici din județul Caraș-Severin, la aproximativ 120 km est de Timișoara. Se află în Parcul Național Semenic-Cheile Carașului și este accesibilă printr-un drum asfaltat scurt și o platformă de observație din lemn. Zona face parte dintr-un traseu scenic prin Cheile Minișului."
+    }
+  ]
+}

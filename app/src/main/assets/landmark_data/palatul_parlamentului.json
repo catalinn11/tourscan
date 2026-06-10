@@ -1,0 +1,48 @@
+{
+  "landmark_id": "palatul_parlamentului",
+  "landmark_name": "Palace of the Parliament",
+  "location": "Bucharest, Romania",
+  "coordinates": {
+    "lat": 44.4275,
+    "lng": 26.0877
+  },
+  "google_maps_link": "https://maps.app.goo.gl/Yx8pNkfVQgQz6Nwx6",
+  "quick_facts": {
+    "built": "1984-1997",
+    "architecture_style": "Socialist Neoclassical",
+    "recommended_visit_time": "1.5-2 hours",
+    "official_website": "https://cic.cdep.ro/"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "history",
+      "title": "History",
+      "body": "The Palace of the Parliament was commissioned by Nicolae Ceausescu in 1984, during the communist era, as the seat of political and administrative power. Its construction required the demolition of a large part of Bucharest's historic center, displacing over 40,000 people. Work continued even after the 1989 revolution, and the building was largely completed by 1997. Today it houses the Romanian Parliament."
+    },
+    {
+      "id": 2,
+      "type": "architecture",
+      "title": "Architecture",
+      "body": "Designed by architect Anca Petrescu, the Palace is the world's heaviest building and the second-largest administrative building after the Pentagon. It covers 365,000 square meters across 12 floors above ground and 8 underground levels. The interior features 1,100 rooms with massive marble halls, crystal chandeliers weighing up to 5 tons, and ornate wood carvings — all made exclusively from Romanian materials."
+    },
+    {
+      "id": 3,
+      "type": "culture",
+      "title": "A Controversial Symbol",
+      "body": "The Palace remains one of Romania's most debated landmarks. For many Romanians it represents the excesses of the Ceausescu regime — entire neighborhoods were razed for its construction, including historic churches and monasteries. Others see it as an impressive feat of engineering and craftsmanship. Today it serves a practical role as home to the Romanian Parliament, a conference center, and the National Museum of Contemporary Art."
+    },
+    {
+      "id": 4,
+      "type": "records",
+      "title": "World Records",
+      "body": "The building holds several Guinness World Records: it is the heaviest building in the world at approximately 4.1 million tonnes, the most expensive administrative building ever constructed, and the largest civilian building by volume. The construction used an estimated 1 million cubic meters of marble, 3,500 tonnes of crystal for 480 chandeliers, and 700,000 tonnes of steel and bronze."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "Visitor Info",
+      "body": "The Palace of the Parliament is located on Dealul Arsenalului in central Bucharest, at the western end of Unirii Boulevard. Guided tours are available daily and must be booked in advance; visitors need a valid ID. The tour covers the main halls, balconies, and terraces with panoramic views over Bucharest. The National Museum of Contemporary Art, located in a wing of the building, is also open to visitors."
+    }
+  ]
+}
