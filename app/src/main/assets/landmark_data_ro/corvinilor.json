@@ -1,0 +1,48 @@
+{
+  "landmark_id": "corvin",
+  "landmark_name": "Castelul Corvinilor",
+  "location": "Hunedoara, Județul Hunedoara, România",
+  "coordinates": {
+    "lat": 45.7497,
+    "lng": 22.8892
+  },
+  "google_maps_link": "https://maps.app.goo.gl/fnKeGy7y3xgAcSUU9",
+  "quick_facts": {
+    "built": "1446",
+    "architecture_style": "Gotic-Renascentist",
+    "recommended_visit_time": "2 ore",
+    "official_website": "http://www.castelulcorvinilor.ro/en/"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "history",
+      "title": "🏰 Istorie",
+      "body": "Castelul Corvinilor, cunoscut și ca Castelul Huniazilor sau Castelul Hunedoara, este unul dintre cele mai mari castele din Europa. Datează din secolul al XIV-lea, dar înfățișarea sa gotică-renascentistă actuală a fost în mare parte modelată de Iancu de Hunedoara între 1440 și 1456. Hunyadi a fost un celebru comandant militar care a respins invaziile otomane și a servit ca regent al Ungariei."
+    },
+    {
+      "id": 2,
+      "type": "history",
+      "title": "🗡️ Putere militară",
+      "body": "Castelul a servit ca fortăreață militară cheie în campaniile împotriva Imperiului Otoman în secolul al XV-lea. Zidurile sale masive, turnurile și șanțul de apărare l-au făcut aproape inexpugnabil. Castelul dispune de impresionanta Sală a Cavalerilor, folosită pentru consilii militare, și Sala Dietei, unde se luau decizii politice."
+    },
+    {
+      "id": 3,
+      "type": "legend",
+      "title": "🕳️ Legenda fântânii",
+      "body": "Fântâna castelului, săpată la o adâncime de 28 de metri, este înconjurată de o legendă faimoasă. Conform poveștii, trei prizonieri turci au primit promisiunea libertății dacă sapă până la apă. După 15 ani de muncă, au găsit în cele din urmă apă — dar tot nu au fost eliberați. Se spune că au gravat pe fântână inscripția: „Aveți apă, dar nu aveți inimă.\" Textul este vizibil și astăzi."
+    },
+    {
+      "id": 4,
+      "type": "architecture",
+      "title": "🏗️ Arhitectură",
+      "body": "Castelul Corvinilor este un exemplu superb de arhitectură gotică cu adăugiri renascentiste. Dispune de turnurile rotunde iconice, un pod basculant peste un șanț sec, o groapă de urși și sculpturi elaborate în piatră. Silueta castelului cu turnurile sale gotice reflectată în râul Zlaști îl face unul dintre cele mai fotografiate monumente medievale din România."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Informații pentru vizitatori",
+      "body": "Situat în orașul Hunedoara din vestul Transilvaniei, Castelul Corvinilor se află la aproximativ 18 km de Deva și 100 km de Timișoara. Apare pe mai multe liste internaționale ale celor mai frumoase castele din lume. Castelul găzduiește festivaluri medievale, concerte și evenimente teatrale pe tot parcursul anului, făcându-l o destinație atmosferică în orice sezon."
+    }
+  ]
+}

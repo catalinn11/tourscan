@@ -1,0 +1,48 @@
+{
+  "landmark_id": "salina_turda",
+  "landmark_name": "Salina Turda",
+  "location": "Turda, Județul Cluj, România",
+  "coordinates": {
+    "lat": 46.5880,
+    "lng": 23.7876
+  },
+  "google_maps_link": "https://maps.app.goo.gl/tRaR7aKH8MTavKbk8",
+  "quick_facts": {
+    "feature_type": "Mină de sare subterană",
+    "depth": "120 metri",
+    "recommended_visit_time": "2-3 ore",
+    "official_website": "https://salinaturda.eu"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "nature",
+      "title": "⛏️ O minune subterană",
+      "body": "Salina Turda este una dintre cele mai vechi și mai spectaculoase mine de sare din lume. Menționată pentru prima dată în 1075, a fost operațională până în 1932. În loc să devină o peșteră uitată, a fost transformată în 2010 într-un parc tematic subteran futurist care atrage sute de mii de turiști anual."
+    },
+    {
+      "id": 2,
+      "type": "architecture",
+      "title": "🎡 Parc de distracții SF",
+      "body": "Interiorul minei arată ca o bază secretă dintr-un film science fiction. Coborând 120 de metri sub pământ, vizitatorii găsesc o roată panoramică, terenuri de minigolf, piste de bowling, mese de ping-pong și un mic amfiteatru, toate iluminate de o iluminare neon dramatică și futuristă."
+    },
+    {
+      "id": 3,
+      "type": "nature",
+      "title": "🚣 Lacul din Mina Terezia",
+      "body": "Cea mai adâncă parte a complexului este Mina Terezia, ajungând la o adâncime de 120 de metri. La baza sa se află un lac subteran cu o insulă de sare. Vizitatorii pot închiria bărci cu vâsle și pagaia pe lacul luminat straniu, înconjurați de pereți abrupți care arată secole de extracție manuală a sării."
+    },
+    {
+      "id": 4,
+      "type": "trivia",
+      "title": "🌬️ Atmosferă vindecătoare",
+      "body": "Aerul din Salina Turda este incredibil de pur, menținând o temperatură constantă de 10-12°C și o umiditate de 80% pe tot parcursul anului. Este complet lipsit de alergeni și bacterii, făcând mina o destinație populară pentru haloterapie — un tratament benefic pentru persoanele cu probleme respiratorii precum astmul."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Informații pentru vizitatori",
+      "body": "Salina Turda este situată lângă orașul Cluj-Napoca. Accesul la camerele principale se face cu liftul sau pe sute de trepte din lemn. Aduceți haine călduroase, deoarece rămâne răcoare chiar și în mijlocul verii. Zona de parcare și pavilioanele moderne de la intrare sunt bine organizate pentru vizitatori."
+    }
+  ]
+}

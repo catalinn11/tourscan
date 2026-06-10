@@ -1,0 +1,48 @@
+{
+  "landmark_id": "transfagarasan",
+  "landmark_name": "Transfăgărășanul",
+  "location": "Munții Făgăraș, România",
+  "coordinates": {
+    "lat": 45.6019,
+    "lng": 24.6141
+  },
+  "google_maps_link": "https://maps.app.goo.gl/QiVo3TswDd2nWKKB8",
+  "quick_facts": {
+    "built": "1970-1974",
+    "highest_point": "2.042 metri",
+    "length": "90 kilometri",
+    "open_season": "De obicei iulie - octombrie"
+  },
+  "cards": [
+    {
+      "id": 1,
+      "type": "architecture",
+      "title": "🛣️ Cel mai bun drum din lume",
+      "body": "Transfăgărășanul (DN7C) este un drum montan asfaltat spectaculos de 90 km care traversează secțiunea sudică a Munților Carpați. Cu serpentinele sale nesfârșite, prăpăstiile dramatice și priveliștile montane ample, a fost declarat celebru „cel mai bun drum din lume\" de prezentatorii emisiunii Top Gear."
+    },
+    {
+      "id": 2,
+      "type": "history",
+      "title": "🏗️ O nebunie strategică",
+      "body": "Drumul a fost construit între 1970 și 1974 la ordinele lui Nicolae Ceaușescu. Temându-se de o invazie în urma invaziei sovietice din Cehoslovacia din 1968, Ceaușescu a dorit un traseu militar rapid peste munți. Construcția grăbită a fost extrem de periculoasă, costând viața a zeci de militari."
+    },
+    {
+      "id": 3,
+      "type": "nature",
+      "title": "🏞️ Lacul Bâlea",
+      "body": "La cel mai înalt punct al trecătorii (2.042 metri) se află Lacul Bâlea, un lac glaciar superb. Zona dispune de cabane unde călătorii pot mânca sau rămâne peste noapte. Iarna, când drumul este închis mașinilor, complet acoperit de zăpadă, un teleferic oferă acces la un Hotel de Gheață construit din nou în fiecare an."
+    },
+    {
+      "id": 4,
+      "type": "nature",
+      "title": "🐻 Întâlniri cu fauna sălbatică",
+      "body": "Munții Făgăraș adăpostesc o populaţie mare de urși bruni. Este foarte frecvent ca șoferii de pe Transfăgărășan să întâlnească urși stând chiar pe marginea drumului. Deși par calmi și se așteaptă la mâncare de la turiști, se recomandă insistent să rămâneți în mașină și să nu-i hrăniți, din motive de siguranță."
+    },
+    {
+      "id": 5,
+      "type": "visitor_info",
+      "title": "📍 Informații pentru vizitatori",
+      "body": "Din cauza zăpezilor abundente, secțiunea cea mai înaltă a Transfăgărășanului este de obicei închisă din octombrie până în iunie, făcându-l o destinație exclusiv de vară pentru șofat. Traficul poate fi foarte intens în weekendurile din august. Cetatea Poenari, adevărata fortăreață a lui Vlad Țepeș, poate fi vizitată lângă capătul sudic al drumului."
+    }
+  ]
+}
