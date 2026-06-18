@@ -42,18 +42,19 @@ fun PhotoListScreen(navController: NavController) {
     // Confirmation dialog
     if (showDeleteDialog) {
         AlertDialog(
-            onDismissRequest = { },
+            onDismissRequest = { showDeleteDialog = false },
             title = { Text(Strings[lang, StringKey.DELETE_ALL_PHOTOS]) },
             text = { Text(Strings[lang, StringKey.DELETE_ALL_CONFIRM]) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deleteAllPhotos()
+                    showDeleteDialog = false
                 }) {
                     Text(Strings[lang, StringKey.DELETE], color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { }) {
+                TextButton(onClick = { showDeleteDialog = false }) {
                     Text(Strings[lang, StringKey.CANCEL])
                 }
             }
@@ -73,10 +74,10 @@ fun PhotoListScreen(navController: NavController) {
                 },
                 actions = {
                     if (uiState.photos.isNotEmpty()) {
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = { showDeleteDialog = true }) {
                             Icon(
                                 imageVector = Icons.Outlined.DeleteSweep,
-                                contentDescription = "Delete All",
+                                contentDescription = Strings[lang, StringKey.DELETE_ALL_PHOTOS],
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }
@@ -115,3 +116,4 @@ fun PhotoListScreen(navController: NavController) {
         }
     }
 }
+
